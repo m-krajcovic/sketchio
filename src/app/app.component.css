@@ -1,0 +1,11 @@
+.chat {
+  display: inline-block;
+  width: 200px;
+  height: 600px;
+  background-color: red;
+  border: 1px solid black;
+}
+
+.drawing-board {
+  display: inline-block;
+}
