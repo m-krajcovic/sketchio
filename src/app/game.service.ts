@@ -10,6 +10,7 @@ export class Player {
 export class GameService {
 
   newPath: EventEmitter<Path>;
+  gameIdChange: EventEmitter<string>;
 
   gameId: string;
   socketId: string;
@@ -20,6 +21,7 @@ export class GameService {
 
   constructor() {
     this.newPath = new EventEmitter<Path>();
+    this.gameIdChange = new EventEmitter<string>();
     this.socket = io.connect();
     this.socket.on('connected', this.onConnected.bind(this));
     this.socket.on('newGameCreated', this.onNewGameCreated.bind(this));
@@ -32,13 +34,12 @@ export class GameService {
   }
 
   onNewGameCreated(data): void {
-    console.log(data);
     this.gameId = data.gameId;
-    this.socketId = data.mySocketId;
+    this.gameIdChange.next(this.gameId);
   }
 
   onConnected(): void {
-    console.log(this.socket);
+    this.socketId = this.socket.id;
   }
 
   joinGame(gameId: string) {
@@ -53,21 +54,19 @@ export class GameService {
 
 
   onPlayerJoinedRoom(data) {
-    console.log(data);
     if (this.socketId === data.originSocketId) {
       this.gameId = data.gameId;
+      this.gameIdChange.next(this.gameId);
     }
   }
 
   onNewPath(data) {
-    console.log(data);
     if (data.originSocketId !== this.socketId) {
       this.newPath.next(data.path);
     }
   }
 
   sendNewPath(path: Path): void {
-
     this.socket.emit('newPath', {
       gameId: this.gameId,
       originSocketId: this.socketId,

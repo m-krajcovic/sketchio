@@ -21,6 +21,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this._gameService.newPath.subscribe(path => this.drawingBoard.addPath(path));
+    this._gameService.gameIdChange.subscribe(gameId => this.gameId = gameId);
     this.drawingBoard.newPath.subscribe(path => this._gameService.sendNewPath(path));
   }
 
