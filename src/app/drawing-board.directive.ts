@@ -72,6 +72,7 @@ export class DrawingBoardDirective {
     this.element.addEventListener('mouseup', (event) => {
       // stop drawing
       if (!this.disabled) {
+        this.currentPath.points = this.reducePoints(this.currentPath.points);
         this.newPath.next(this.currentPath);
         this.currentPath = null;
         this.redraw();
@@ -94,8 +95,18 @@ export class DrawingBoardDirective {
     this.paths.push(this.currentPath);
   }
 
+  private reducePoints(points: Point[]): Point[] {
+    let newPoints: Point[] = [];
+    for (let i = 0; i < points.length - 1; i++) {
+      if (i % 8 === 0) {
+        newPoints.push(points[i]);
+      }
+    }
+    newPoints.push(points[points.length - 1])
+    return newPoints;
+  }
+
   private draw(lX, lY, cX, cY): void {
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.currentPath.points.push({x: cX, y: cY});
     this.redraw();
 
@@ -107,6 +118,7 @@ export class DrawingBoardDirective {
   }
 
   private redraw() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.paths.forEach(path => {
       let points = path.points;
       this.ctx.lineWidth = path.size;
