@@ -2,7 +2,7 @@
 
 </div>
 <div class="drawing-board">
-  <canvas drawingBoard #db1="drawingBoard" [drawingSize]="sizeInput.value" width="800" height="600" (newPath)="db2.addPath($event)"></canvas>
+  <canvas drawingBoard #db1="drawingBoard" [drawingSize]="sizeInput.value" [drawingColor]="colorInput.value" width="800" height="600" (newPath)="db2.addPath($event)"></canvas>
 </div>
 <button (click)="reset()">Reset</button>
 <button (click)="save()">Save</button>
@@ -13,7 +13,8 @@
 
 <input type="range" #sizeInput value="5" min="1" max="50" step="1" title="Range"/>
 <input type="text" [(ngModel)]="gameId" title="Game Id"/>
-
+<input type="color" #colorInput title="color" value="#44bbff"/>
+<input type="text" #colorText [(ngModel)]="colorInput.value" title="Color"/>
 <div class="drawing-board">
-  <canvas drawingBoard #db2="drawingBoard" [drawingSize]="sizeInput.value" [drawingDisabled]="true" width="800" height="600"></canvas>
+  <canvas drawingBoard #db2="drawingBoard" [drawingDisabled]="true" width="800" height="600"></canvas>
 </div>

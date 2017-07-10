@@ -49,4 +49,9 @@ export class AppComponent implements OnInit {
   join() {
     this._gameService.joinGame(this.gameId);
   }
+
+
+  colorChanged(event): void {
+    console.log(event);
+  }
 }

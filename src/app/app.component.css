@@ -9,4 +9,6 @@
 .drawing-board {
   display: inline-block;
   border: 1px solid black;
+  user-select: none;
 }
+

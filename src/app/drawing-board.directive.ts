@@ -89,6 +89,7 @@ export class DrawingBoardDirective {
 
   private beginDrawing(x: number, y: number): void {
     this.currentPath = new Path();
+    console.log(this.color);
     this.currentPath.color = this.color;
     this.currentPath.size = this.size;
     this.currentPath.points.push({x: x, y: y});
