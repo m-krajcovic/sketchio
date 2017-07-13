@@ -9,12 +9,14 @@ import { ChatComponent } from './chat/chat.component';
 import {ChatService} from "./chat.service";
 import {DrawingService} from "./drawing.service";
 import {GameService} from "./game.service";
+import { DrawingBoardComponent } from './drawing-board/drawing-board.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DrawingBoardDirective,
-    ChatComponent
+    ChatComponent,
+    DrawingBoardComponent
   ],
   imports: [
     BrowserModule,

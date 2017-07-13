@@ -1,5 +1,4 @@
-import {Directive, ElementRef, EventEmitter, Input, Output} from '@angular/core';
-import {log} from "util";
+import {Directive, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 export class Point {
   x: number;
@@ -7,20 +6,21 @@ export class Point {
 }
 
 export class Path {
-  color: string = "#4bf";
-  size: number = 5;
+  color = '#4bf';
+  size = 5;
   points: Point[] = [];
 }
 
 @Directive({
-  selector: '[drawingBoard]',
-  exportAs: 'drawingBoard'
+  selector: '[appDrawingBoard]',
+  exportAs: 'appDrawingBoard'
 })
-export class DrawingBoardDirective {
+export class DrawingBoardDirective implements OnInit {
 
-  @Input('drawingColor') color: string = "#4bf";
-  @Input('drawingSize') size: number = 5;
-  @Input('drawingDisabled') disabled: boolean = false;
+
+  @Input() drawingColor = '#4bf';
+  @Input() drawingSize = 5;
+  @Input() drawingDisabled = false;
 
   @Output() newPath: EventEmitter<Path>;
 
@@ -33,51 +33,55 @@ export class DrawingBoardDirective {
     this.newPath = new EventEmitter<Path>();
     this.element = el.nativeElement;
     this.ctx = this.element.getContext('2d');
-    let lastX: number;
-    let lastY: number;
-    this.element.addEventListener('mousedown', (event) => {
-      if (!this.disabled) {
-        if (event.offsetX !== undefined) {
-          lastX = event.offsetX;
-          lastY = event.offsetY;
-        } else { // Firefox compatibility
-          lastX = event.layerX - event.currentTarget.offsetLeft;
-          lastY = event.layerY - event.currentTarget.offsetTop;
+  }
+
+  ngOnInit(): void {
+    if (!this.drawingDisabled) {
+      let lastX: number;
+      let lastY: number;
+      this.element.addEventListener('mousedown', (event) => {
+        if (!this.drawingDisabled) {
+          if (event.offsetX !== undefined) {
+            lastX = event.offsetX;
+            lastY = event.offsetY;
+          } else { // Firefox compatibility
+            lastX = event.layerX - event.currentTarget.offsetLeft;
+            lastY = event.layerY - event.currentTarget.offsetTop;
+          }
+
+          // begins new line
+          this.beginDrawing(lastX, lastY);
+        }
+      });
+      this.element.addEventListener('mousemove', (event) => {
+        if (!this.drawingDisabled && this.currentPath) {
+          // get current mouse position
+          let currentX, currentY;
+          if (event.offsetX !== undefined) {
+            currentX = event.offsetX;
+            currentY = event.offsetY;
+          } else {
+            currentX = event.layerX - event.currentTarget.offsetLeft;
+            currentY = event.layerY - event.currentTarget.offsetTop;
+          }
+
+          this.draw(lastX, lastY, currentX, currentY);
+
+          // set current coordinates to last one
+          lastX = currentX;
+          lastY = currentY;
         }
 
-        // begins new line
-        this.beginDrawing(lastX, lastY);
-      }
-    });
-    this.element.addEventListener('mousemove', (event) => {
-      if (!this.disabled && this.currentPath) {
-        // get current mouse position
-        let currentX, currentY;
-        if (event.offsetX !== undefined) {
-          currentX = event.offsetX;
-          currentY = event.offsetY;
-        } else {
-          currentX = event.layerX - event.currentTarget.offsetLeft;
-          currentY = event.layerY - event.currentTarget.offsetTop;
+      });
+      this.element.addEventListener('mouseup', (event) => {
+        // stop drawing
+        if (!this.drawingDisabled) {
+          this.newPath.next(this.currentPath);
+          this.currentPath = null;
+          this.redraw();
         }
-
-        this.draw(lastX, lastY, currentX, currentY);
-
-        // set current coordinates to last one
-        lastX = currentX;
-        lastY = currentY;
-      }
-
-    });
-    this.element.addEventListener('mouseup', (event) => {
-      // stop drawing
-      if (!this.disabled) {
-        this.currentPath.points = this.reducePoints(this.currentPath.points);
-        this.newPath.next(this.currentPath);
-        this.currentPath = null;
-        this.redraw();
-      }
-    });
+      });
+    }
   }
 
   private midPointBtw(p1: Point, p2: Point): Point {
@@ -89,26 +93,14 @@ export class DrawingBoardDirective {
 
   private beginDrawing(x: number, y: number): void {
     this.currentPath = new Path();
-    console.log(this.color);
-    this.currentPath.color = this.color;
-    this.currentPath.size = this.size;
-    this.currentPath.points.push({x: x, y: y});
+    this.currentPath.color = this.drawingColor;
+    this.currentPath.size = this.drawingSize;
+    this.currentPath.points.push({ x: x, y: y });
     this.paths.push(this.currentPath);
   }
 
-  private reducePoints(points: Point[]): Point[] {
-    let newPoints: Point[] = [];
-    for (let i = 0; i < points.length - 1; i++) {
-      if (i % 8 === 0) {
-        newPoints.push(points[i]);
-      }
-    }
-    newPoints.push(points[points.length - 1])
-    return newPoints;
-  }
-
   private draw(lX, lY, cX, cY): void {
-    this.currentPath.points.push({x: cX, y: cY});
+    this.currentPath.points.push({ x: cX, y: cY });
     this.redraw();
 
     // line from
@@ -121,7 +113,7 @@ export class DrawingBoardDirective {
   private redraw() {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.paths.forEach(path => {
-      let points = path.points;
+      const points = path.points;
       this.ctx.lineWidth = path.size;
       this.ctx.lineJoin = this.ctx.lineCap = 'round';
       this.ctx.strokeStyle = path.color;
@@ -131,7 +123,7 @@ export class DrawingBoardDirective {
       this.ctx.beginPath();
       this.ctx.moveTo(p1.x, p1.y);
       for (let i = 1; i < points.length; i++) {
-        let midPoint = this.midPointBtw(p1, p2);
+        const midPoint = this.midPointBtw(p1, p2);
         this.ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
         p1 = points[i];
         p2 = points[i + 1];

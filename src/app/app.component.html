@@ -1,9 +1,7 @@
 <div class="chat">
 
 </div>
-<div class="drawing-board">
-  <canvas drawingBoard #db1="drawingBoard" [drawingSize]="sizeInput.value" [drawingColor]="colorInput.value" width="800" height="600" (newPath)="db2.addPath($event)"></canvas>
-</div>
+<app-drawing-board #drawingBoard [drawingWidth]="800" [drawingHeight]="600" [drawingColor]="colorInput.value" [drawingSize]="sizeInput.value"></app-drawing-board>
 <button (click)="reset()">Reset</button>
 <button (click)="save()">Save</button>
 <button (click)="load()">Load</button>
@@ -15,6 +13,3 @@
 <input type="text" [(ngModel)]="gameId" title="Game Id"/>
 <input type="color" #colorInput title="color" value="#44bbff"/>
 <input type="text" #colorText [(ngModel)]="colorInput.value" title="Color"/>
-<div class="drawing-board">
-  <canvas drawingBoard #db2="drawingBoard" [drawingDisabled]="true" width="800" height="600"></canvas>
-</div>

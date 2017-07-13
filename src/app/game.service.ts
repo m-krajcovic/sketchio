@@ -11,6 +11,8 @@ export class GameService {
 
   newPath: EventEmitter<Path>;
   gameIdChange: EventEmitter<string>;
+  newPlayer: EventEmitter<string>;
+  gameJoined: EventEmitter<string>;
 
   gameId: string;
   socketId: string;
@@ -57,6 +59,9 @@ export class GameService {
     if (this.socketId === data.originSocketId) {
       this.gameId = data.gameId;
       this.gameIdChange.next(this.gameId);
+      this.gameJoined.next();
+    } else {
+      this.newPlayer.next(data.playerName);
     }
   }
 

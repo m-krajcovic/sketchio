@@ -1,0 +1,5 @@
+<div class="drawing-board" [ngStyle]="{'height': drawingHeight + 'px', 'width': drawingWidth + 'px'}">
+  <canvas appDrawingBoard #persistentBoard="appDrawingBoard" [drawingDisabled]="true" [width]="drawingWidth" [height]="drawingHeight"></canvas>
+  <canvas appDrawingBoard #tempBoard="appDrawingBoard" [drawingDisabled]="drawingDisabled" [drawingSize]="drawingSize"
+          [drawingColor]="drawingColor" [width]="drawingWidth" [height]="drawingHeight" (newPath)="pathDrawn($event)"></canvas>
+</div>

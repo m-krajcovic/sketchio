@@ -1,6 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {DrawingBoardDirective, Path} from "./drawing-board.directive";
 import {GameService} from "./game.service";
+import {DrawingBoardComponent} from "./drawing-board/drawing-board.component";
 
 @Component({
   selector: 'app-root',
@@ -13,8 +14,7 @@ export class AppComponent implements OnInit {
 
   gameId: string;
 
-  @ViewChild('db1') drawingBoard: DrawingBoardDirective;
-  @ViewChild('db2') dbClone: DrawingBoardDirective;
+  @ViewChild('drawingBoard') drawingBoard: DrawingBoardComponent;
 
   constructor(private _gameService: GameService) {
   }
@@ -25,22 +25,6 @@ export class AppComponent implements OnInit {
     this.drawingBoard.newPath.subscribe(path => this._gameService.sendNewPath(path));
   }
 
-  reset(): void {
-    this.drawingBoard.reset();
-  }
-
-  save(): void {
-    this.savedPaths = this.drawingBoard.getPaths();
-    console.log(this.savedPaths);
-  }
-
-  load(): void {
-    this.drawingBoard.loadPaths(this.savedPaths);
-  }
-
-  undo(): void {
-    this.drawingBoard.undo();
-  }
 
   create() {
     this._gameService.startGame();
