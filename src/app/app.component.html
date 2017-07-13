@@ -1,15 +1,7 @@
 <div class="chat">
 
 </div>
-<app-drawing-board #drawingBoard [drawingWidth]="800" [drawingHeight]="600" [drawingColor]="colorInput.value" [drawingSize]="sizeInput.value"></app-drawing-board>
-<button (click)="reset()">Reset</button>
-<button (click)="save()">Save</button>
-<button (click)="load()">Load</button>
-<button (click)="undo()">Undo</button>
+<app-drawing-board #drawingBoard [drawingWidth]="800" [drawingHeight]="600"></app-drawing-board>
 <button (click)="create()">Create</button>
 <button (click)="join()">Join</button>
-
-<input type="range" #sizeInput value="5" min="1" max="50" step="1" title="Range"/>
 <input type="text" [(ngModel)]="gameId" title="Game Id"/>
-<input type="color" #colorInput title="color" value="#44bbff"/>
-<input type="text" #colorText [(ngModel)]="colorInput.value" title="Color"/>
