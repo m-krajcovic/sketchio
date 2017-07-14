@@ -12,6 +12,12 @@ export class Path {
   points: Point[] = [];
 }
 
+export class ViewPort {
+  width: number;
+  height: number;
+  start: Point;
+}
+
 @Component({
   selector: 'app-drawing-board',
   templateUrl: './drawing-board.component.html',
@@ -57,23 +63,6 @@ export class DrawingBoardComponent implements OnInit {
           newPoints.push(points[i]);
         }
       }
-
-      // console.log(points.length);
-      // newPoints.push(points[0]);
-      // let lastPoint = 0;
-      // for (let i = 1; i < points.length - 1; i += 6) {
-      //   let j = i;
-      //   let distance = this.distance(points[lastPoint], points[j]);
-      //   while (distance > 15 && j - 1 > lastPoint) {
-      //     j--;
-      //     distance = this.distance(points[lastPoint], points[j]);
-      //   }
-      //   i = j;
-      //   lastPoint = i;
-      //   newPoints.push(points[i]);
-      // }
-
-
       newPoints.push(points[points.length - 1]);
     }
     return newPoints;

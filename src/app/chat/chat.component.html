@@ -1,3 +1,18 @@
-<p>
-  chat works!
-</p>
+<div class="chat">
+  <ul>
+    <li>
+      Hello there! Join a game or create a new one!
+    </li>
+    <li *ngFor="let msg of chatMessages" [ngSwitch]="msg.type">
+      <span *ngSwitchCase="1" class="msg-player">
+        <span class="msg-date">{{msg.date | date: 'HH:mm:ss'}}</span>
+        <span class="msg-name">{{msg.playerName}}</span>
+        {{msg.text}}
+      </span>
+      <span *ngSwitchCase="2" class="msg-notification">
+        <span class="msg-date">{{msg.date | date: 'HH:mm:ss'}}</span>
+        {{msg.text}}
+      </span>
+    </li>
+  </ul>
+</div>

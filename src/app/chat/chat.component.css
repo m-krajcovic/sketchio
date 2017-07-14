@@ -1,0 +1,27 @@
+.chat {
+  width: 300px;
+  height: 600px;
+  background-color: rgba(0,0,0,0.02);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.8em;
+}
+
+li {
+  padding: 0 5px 0 5px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+li:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.msg-date {
+  font-weight: 100;
+  color: rgba(0, 0, 0, 0.4);
+}

@@ -24,6 +24,8 @@ export class GameService {
   constructor() {
     this.newPath = new EventEmitter<Path>();
     this.gameIdChange = new EventEmitter<string>();
+    this.newPlayer = new EventEmitter<string>();
+    this.gameJoined = new EventEmitter<string>();
     this.socket = io.connect();
     this.socket.on('connected', this.onConnected.bind(this));
     this.socket.on('newGameCreated', this.onNewGameCreated.bind(this));
@@ -59,7 +61,7 @@ export class GameService {
     if (this.socketId === data.originSocketId) {
       this.gameId = data.gameId;
       this.gameIdChange.next(this.gameId);
-      this.gameJoined.next();
+      this.gameJoined.next(data.playerName);
     } else {
       this.newPlayer.next(data.playerName);
     }

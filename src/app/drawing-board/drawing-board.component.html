@@ -1,11 +1,15 @@
 <div class="drawing-board" [ngStyle]="{'height': drawingHeight + 'px', 'width': drawingWidth + 'px'}">
-  <canvas appDrawingBoard #persistentBoard="appDrawingBoard" [drawingDisabled]="true" [width]="drawingWidth" [height]="drawingHeight"></canvas>
-  <canvas appDrawingBoard #tempBoard="appDrawingBoard" [drawingDisabled]="drawingDisabled" [drawingSize]="sizeInput.value"
-          [drawingColor]="colorInput.value" [width]="drawingWidth" [height]="drawingHeight" (newPath)="pathDrawn($event)"></canvas>
+  <canvas appDrawingBoard #persistentBoard="appDrawingBoard" [drawingDisabled]="true" [width]="drawingWidth"
+          [height]="drawingHeight"></canvas>
+  <canvas appDrawingBoard #tempBoard="appDrawingBoard" [drawingDisabled]="drawingDisabled"
+          [drawingSize]="sizeInput.value"
+          [drawingColor]="colorInput.value" [width]="drawingWidth" [height]="drawingHeight"
+          (newPath)="pathDrawn($event)"></canvas>
+  <div class="inputs-container">
+    <button (click)="reset()">Reset</button>
+    <button (click)="undo()">Undo</button>
+    <input type="range" #sizeInput value="5" min="1" max="50" step="1" title="Range"/>
+    <input type="color" #colorInput title="color" value="#44bbff"/>
+    <input type="text" #colorText [(ngModel)]="colorInput.value" title="Color"/>
+  </div>
 </div>
-<button (click)="reset()">Reset</button>
-<button (click)="undo()">Undo</button>
-
-<input type="range" #sizeInput value="5" min="1" max="50" step="1" title="Range"/>
-<input type="color" #colorInput title="color" value="#44bbff"/>
-<input type="text" #colorText [(ngModel)]="colorInput.value" title="Color"/>

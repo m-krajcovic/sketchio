@@ -2,12 +2,20 @@
   user-select: none;
   cursor: crosshair;
   position: relative;
-  display: inline-block;
-  border: 1px solid black;
 }
 
 canvas {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.inputs-container {
+  /*display: inline-block;*/
+  position: absolute;
+  top: 0;
+}
+
+input, button {
+  /*display: block;*/
 }
