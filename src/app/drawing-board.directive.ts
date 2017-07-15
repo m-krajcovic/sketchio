@@ -11,6 +11,40 @@ export class Path {
   points: Point[] = [];
 }
 
+export class ViewPort {
+  width: number;
+  height: number;
+  zoom: number;
+  start: Point;
+
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.zoom = 1;
+    this.start = {x: 0, y: 0};
+  }
+
+  zoomBy(by: number): void {
+    this.zoom = this.zoom * by;
+    this.height = this.height * by;
+    this.width = this.width * by;
+    //this.redraw();
+  }
+
+  move(up: number, right: number): void {
+    this.start.x = this.start.x + right;
+    this.start.y = this.start.y + up;
+    //this.redraw();
+  }
+
+  resize(width: number, height: number): void {
+    this.width = width;
+    this.height = height;
+    //this.redraw();
+  }
+}
+
+
 @Directive({
   selector: '[appDrawingBoard]',
   exportAs: 'appDrawingBoard'
@@ -22,7 +56,13 @@ export class DrawingBoardDirective implements OnInit {
   @Input() drawingSize = 5;
   @Input() drawingDisabled = false;
 
+  @Input() drawingHeight = 600;
+  @Input() drawingWidth = 800;
+
   @Output() newPath: EventEmitter<Path>;
+
+  @Input() viewPort; //: ViewPort = new ViewPort(800, 600);
+
 
   private ctx;
   private element;
@@ -65,13 +105,12 @@ export class DrawingBoardDirective implements OnInit {
             currentY = event.layerY - event.currentTarget.offsetTop;
           }
 
-          this.draw(lastX, lastY, currentX, currentY);
+          this.draw(currentX, currentY);
 
           // set current coordinates to last one
           lastX = currentX;
           lastY = currentY;
         }
-
       });
       this.element.addEventListener('mouseup', (event) => {
         // stop drawing
@@ -92,15 +131,22 @@ export class DrawingBoardDirective implements OnInit {
   }
 
   private beginDrawing(x: number, y: number): void {
+    console.log("wtf", this.viewPort);
     this.currentPath = new Path();
     this.currentPath.color = this.drawingColor;
     this.currentPath.size = this.drawingSize;
-    this.currentPath.points.push({ x: x, y: y });
+    let cp = { x: x, y: y };
+    console.log(cp);
+    let p = this.translatePointToViewPort(cp);
+    console.log(p);
+    let cvp = this.translatePointToCanvas(p);
+    console.log(cvp);
+    this.currentPath.points.push(p);
     this.paths.push(this.currentPath);
   }
 
-  private draw(lX, lY, cX, cY): void {
-    this.currentPath.points.push({ x: cX, y: cY });
+  private draw(cX, cY): void {
+    this.currentPath.points.push(this.translatePointToViewPort({ x: cX, y: cY }));
     this.redraw();
 
     // line from
@@ -110,11 +156,11 @@ export class DrawingBoardDirective implements OnInit {
     // this.ctx.stroke();
   }
 
-  private redraw() {
+  redraw(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.paths.forEach(path => {
-      const points = path.points;
-      this.ctx.lineWidth = path.size;
+      const points = path.points.map((p: Point) => this.translatePointToCanvas(p));
+      this.ctx.lineWidth = path.size * this.viewPort.zoom;
       this.ctx.lineJoin = this.ctx.lineCap = 'round';
       this.ctx.strokeStyle = path.color;
       let p1 = points[0];
@@ -132,6 +178,35 @@ export class DrawingBoardDirective implements OnInit {
       this.ctx.stroke();
     });
   }
+
+
+  //translatePoint(point: Point): Point {
+    //// 800x600 (width x height)
+    //// viewport   canvas
+    //// 0, 0       0, 600
+    //// 800, 0     800, 600
+    //// 0, 600     0, 0
+    //// 800, 600   800, 0
+    //// x rovnake
+    //// cy = vp.h - vpy
+    //// vpy = vp.h - cy
+
+  //}
+
+  translatePointToCanvas(point: Point) {
+    let newPoint = new Point();
+    newPoint.x = (point.x - (this.viewPort.start.x)) * this.viewPort.zoom;
+    newPoint.y = ((point.y + (this.viewPort.start.y)) * this.viewPort.zoom);
+    return newPoint;
+  }
+
+  translatePointToViewPort(point: Point) {
+    let newPoint = new Point();
+    newPoint.x = (point.x / this.viewPort.zoom) + (this.viewPort.start.x);
+    newPoint.y = ((point.y / this.viewPort.zoom) - (this.viewPort.start.y));
+    return newPoint;
+  }
+
 
   reset(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
@@ -159,5 +234,22 @@ export class DrawingBoardDirective implements OnInit {
   undo() {
     this.paths.splice(this.paths.length - 1, 1);
     this.loadPaths(this.paths);
+  }
+
+  zoom(by: number): void {
+    this.viewPort.zoom = this.viewPort.zoom * by;
+    this.redraw();
+  }
+
+  move(up: number, right: number): void {
+    this.viewPort.start.x = this.viewPort.start.x + right;
+    this.viewPort.start.y = this.viewPort.start.y + up;
+    this.redraw();
+  }
+
+  resize(width: number, height: number): void {
+    this.viewPort.width = width;
+    this.viewPort.height = height;
+    this.redraw();
   }
 }
