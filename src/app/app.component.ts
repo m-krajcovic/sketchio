@@ -22,11 +22,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._gameService.newPath.subscribe(path => this.drawingBoard.addPath(path));
     this._gameService.gameIdChange.subscribe(gameId => this.gameId = gameId);
-    this.drawingBoard.newPath.subscribe(path => this._gameService.sendNewPath(path));
     this._gameService.newPlayer.subscribe(name => this.notifyNewPlayer(name));
     this._gameService.gameJoined.subscribe(name => this.notifyWelcome(name));
+    this.drawingBoard.newToolData.subscribe(toolData => this._gameService.sendNewToolData(toolData));
+    this._gameService.newToolData.subscribe(toolData => this.drawingBoard.addToolData(toolData));
+    this.drawingBoard.viewPortChange.subscribe(viewPort => this._gameService.sendViewPortChange(viewPort));
+    this._gameService.viewPortChange.subscribe(viewPort => this.drawingBoard.changeViewPort(viewPort));
   }
 
   notifyNewPlayer(name): void {
@@ -45,6 +47,7 @@ export class AppComponent implements OnInit {
       text: `Welcome to the game ${name}!`,
       playerName: ''
     });
+    this.drawingBoard.drawingDisabled = true;
   }
 
 
@@ -54,10 +57,5 @@ export class AppComponent implements OnInit {
 
   join() {
     this._gameService.joinGame(this.gameId);
-  }
-
-
-  colorChanged(event): void {
-    console.log(event);
   }
 }

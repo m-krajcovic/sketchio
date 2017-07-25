@@ -1,6 +1,8 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
 import {Path} from "./drawing-board.directive";
+import {ToolData} from "./drawing-board.directive";
+import {ViewPort} from "./drawing-board.directive";
 
 export class Player {
 
@@ -9,44 +11,47 @@ export class Player {
 @Injectable()
 export class GameService {
 
-  newPath: EventEmitter<Path>;
-  gameIdChange: EventEmitter<string>;
-  newPlayer: EventEmitter<string>;
-  gameJoined: EventEmitter<string>;
+  newToolData:EventEmitter<ToolData>;
+  gameIdChange:EventEmitter<string>;
+  newPlayer:EventEmitter<string>;
+  gameJoined:EventEmitter<string>;
+  viewPortChange:EventEmitter<ViewPort>;
 
-  gameId: string;
-  socketId: string;
-  me: Player;
-  players: Player[];
+  gameId:string;
+  socketId:string;
+  me:Player;
+  players:Player[];
 
   socket;
 
   constructor() {
-    this.newPath = new EventEmitter<Path>();
+    this.newToolData = new EventEmitter<ToolData>();
     this.gameIdChange = new EventEmitter<string>();
     this.newPlayer = new EventEmitter<string>();
     this.gameJoined = new EventEmitter<string>();
+    this.viewPortChange = new EventEmitter<ViewPort>();
     this.socket = io.connect();
     this.socket.on('connected', this.onConnected.bind(this));
     this.socket.on('newGameCreated', this.onNewGameCreated.bind(this));
     this.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom.bind(this));
     this.socket.on('newPath', this.onNewPath.bind(this));
+    this.socket.on('viewPortChange', this.onViewPortChange.bind(this));
   }
 
-  startGame(): void {
+  startGame():void {
     this.socket.emit('hostCreateNewGame');
   }
 
-  onNewGameCreated(data): void {
+  onNewGameCreated(data):void {
     this.gameId = data.gameId;
     this.gameIdChange.next(this.gameId);
   }
 
-  onConnected(): void {
+  onConnected():void {
     this.socketId = this.socket.id;
   }
 
-  joinGame(gameId: string) {
+  joinGame(gameId:string) {
     let data = {
       gameId: gameId,
       playerName: 'anon'
@@ -69,15 +74,36 @@ export class GameService {
 
   onNewPath(data) {
     if (data.originSocketId !== this.socketId) {
-      this.newPath.next(data.path);
+      this.newToolData.next(data.toolData);
     }
   }
 
-  sendNewPath(path: Path): void {
+  onViewPortChange(data) {
+    if (data.originSocketId !== this.socketId) {
+      this.viewPortChange.next(data.viewPort);
+    }
+  }
+
+  sendNewToolData(toolData:ToolData):void {
     this.socket.emit('newPath', {
       gameId: this.gameId,
       originSocketId: this.socketId,
-      path: path
+      toolData: toolData
     });
+
+  }
+
+  sendViewPortChange(viewPort:ViewPort) {
+    var varArgs = {
+      gameId: this.gameId,
+      originSocketId: this.socketId,
+      viewPort: {
+        width: viewPort.width,
+        height: viewPort.height,
+        zoom: viewPort.zoom,
+        start: viewPort.start,
+      }
+    };
+    this.socket.emit('viewPortChange', varArgs);
   }
 }

@@ -21,6 +21,7 @@ exports.initGame = function(sio, socket){
     gameSocket.on('hostSendCommand', hostSendCommand);
 
     gameSocket.on('newPath', newPath);
+    gameSocket.on('viewPortChange', viewPortChange);
 
     // Player Events
     gameSocket.on('playerJoinGame', playerJoinGame);
@@ -34,6 +35,10 @@ exports.initGame = function(sio, socket){
 
 function newPath(data) {
   io.sockets.in(data.gameId).emit('newPath', data);
+}
+
+function viewPortChange(data) {
+  io.sockets.in(data.gameId).emit('viewPortChange', data);
 }
 
 function newMessage(data){

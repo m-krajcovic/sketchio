@@ -3,6 +3,7 @@ import {DrawingBoardDirective} from "../drawing-board.directive";
 import {Path} from "../drawing-board.directive";
 import {Point} from "../drawing-board.directive";
 import {ViewPort} from "../drawing-board.directive";
+import {ToolData} from "../drawing-board.directive";
 
 
 @Component({
@@ -13,9 +14,10 @@ import {ViewPort} from "../drawing-board.directive";
 })
 export class DrawingBoardComponent implements OnInit {
 
-  @Output() newPath: EventEmitter<Path>;
+  @Output() newToolData: EventEmitter<ToolData>;
+  @Output() viewPortChange: EventEmitter<ViewPort>;
 
-  @Input() drawingColor = '#4bf';
+  @Input() drawingColor = '#44bbff';
   @Input() drawingSize = 5;
   @Input() drawingDisabled = false;
 
@@ -27,44 +29,29 @@ export class DrawingBoardComponent implements OnInit {
 
   viewPort: ViewPort = new ViewPort(800, 600);
 
+  moving: boolean = false;
+
   constructor() {
-    this.newPath = new EventEmitter<Path>();
+    this.newToolData = new EventEmitter<ToolData>();
+    this.viewPortChange = new EventEmitter<ViewPort>();
   }
 
   ngOnInit(): void {
-    this.tempBoard.viewPort = this.viewPort;
-    this.persistentBoard.viewPort = this.viewPort;
+    this.viewPort.changeCommit.subscribe((viewPort) => {
+      this.viewPortChange.next(viewPort);
+    });
   }
 
-  pathDrawn(path: Path): void {
+  toolDataAdded(path: ToolData): void {
+    //console.log(path);
     this.tempBoard.reset();
-    path.points = this.reducePoints(path.points);
-    this.newPath.next(path);
-    console.log(path);
-    this.persistentBoard.addPath(path);
+    this.newToolData.next(path);
+    this.persistentBoard.addToolData(path);
   }
 
-  private reducePoints(points: Point[]): Point[] {
-    const newPoints: Point[] = [];
-    if (points.length) {
-      newPoints.push(points[0]);
-      let distance = 0;
-      for (let i = 1; i < points.length - 1; i++) {
-        distance += this.distance(points[i - 1], points[i]);
-        if (distance > 10) {
-          distance = 0;
-          newPoints.push(points[i]);
-        }
-      }
-      newPoints.push(points[points.length - 1]);
-    }
-    return newPoints;
+  changeViewPort(viewPort: ViewPort) {
+    this.viewPort.changeTo(viewPort);
   }
-
-  private distance(point1: Point, point2: Point): number {
-    return Math.hypot(point1.x - point2.x, point1.y - point2.y);
-  }
-
 
   reset(): void {
     this.persistentBoard.reset();
@@ -74,55 +61,39 @@ export class DrawingBoardComponent implements OnInit {
     this.persistentBoard.undo();
   }
 
-  addPath(path: Path): void {
-    this.persistentBoard.addPath(path);
+  addToolData(path: ToolData): void {
+    this.persistentBoard.addToolData(path);
   }
 
   zoomIn() {
     this.viewPort.zoomBy(2);
-    this.persistentBoard.redraw();
-    this.tempBoard.redraw();
-    //this.persistentBoard.zoom(2);
-    //this.tempBoard.zoom(2);
   }
 
   zoomOut() {
     this.viewPort.zoomBy(0.5);
-    this.persistentBoard.redraw();
-    this.tempBoard.redraw();
-    //this.persistentBoard.zoom(0.5);
-    //this.tempBoard.zoom(0.5);
   }
 
   moveUp() {
-    this.viewPort.move(10, 0);
-    this.persistentBoard.redraw();
-    this.tempBoard.redraw();
-    //this.tempBoard.move(10, 0);
+    this.viewPort.moveBy(-10, 0);
   }
   moveDown() {
-    this.viewPort.move(-10, 0);
-    this.persistentBoard.redraw();
-    this.tempBoard.redraw();
-    //this.persistentBoard.move(-10, 0);
-    //this.tempBoard.move(-10, 0);
+    this.viewPort.moveBy(10, 0);
   }
   moveRight() {
-    this.viewPort.move(0, 10);
-    this.persistentBoard.redraw();
-    this.tempBoard.redraw();
-    //this.persistentBoard.move(0, 10);
-    //this.tempBoard.move(0, 10);
+    this.viewPort.moveBy(0, 10);
   }
   moveLeft() {
-    this.viewPort.move(0, -10);
-    this.persistentBoard.redraw();
-    this.tempBoard.redraw();
-    //this.persistentBoard.move(0, -10);
-    //this.tempBoard.move(0, -10);
+    this.viewPort.moveBy(0, -10);
   }
   resize() {
-    //this.persistentBoard.resize(this.drawingWidth, this.drawingHeight);
-    //this.tempBoard.resize(this.drawingWidth, this.drawingHeight);
+    this.viewPort.resize(this.drawingWidth, this.drawingHeight);
+  }
+
+  toggleMovingTool() {
+    if (this.moving) {
+      this.tempBoard.selectTool('move');
+    } else {
+      this.tempBoard.selectTool('pencil');
+    }
   }
 }
