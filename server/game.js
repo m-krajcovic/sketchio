@@ -17,10 +17,9 @@ exports.initGame = function(sio, socket){
     gameSocket.on('hostRoomFull', hostPrepareGame);
     gameSocket.on('hostCountdownFinished', hostStartGame);
     gameSocket.on('hostNextRound', hostNextRound);
-    gameSocket.on('hostSendNewShapes', hostSendNewShapes);
-    gameSocket.on('hostSendCommand', hostSendCommand);
 
-    gameSocket.on('newPath', newPath);
+    gameSocket.on('newToolData', newToolData);
+    gameSocket.on('newDrawingCommand', newDrawingCommand);
     gameSocket.on('viewPortChange', viewPortChange);
 
     // Player Events
@@ -33,8 +32,12 @@ exports.initGame = function(sio, socket){
     gameSocket.on('sendNewMessage', newMessage);
 };
 
-function newPath(data) {
-  io.sockets.in(data.gameId).emit('newPath', data);
+function newDrawingCommand(data) {
+  io.sockets.in(data.gameId).emit('newDrawingCommand', data);
+}
+
+function newToolData(data) {
+  io.sockets.in(data.gameId).emit('newToolData', data);
 }
 
 function viewPortChange(data) {
@@ -66,15 +69,6 @@ function hostCreateNewGame() {
 
     // Join the Room and wait for the players
     this.join(thisGameId.toString());
-}
-
-function hostSendNewShapes(data){
-    //console.log("Sending new shapes: " + data[0]);
-    io.sockets.in(data.gameId).emit('receiveNewShapes', data.shapes);
-}
-
-function hostSendCommand(data){
-
 }
 
 /**

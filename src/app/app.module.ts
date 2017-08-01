@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
-import { DrawingBoardDirective } from './drawing-board.directive';
+import { DrawingBoardDirective } from './drawing-board/drawing-board.directive';
 import { ChatComponent } from './chat/chat.component';
-import {ChatService} from "./chat.service";
-import {DrawingService} from "./drawing.service";
-import {GameService} from "./game.service";
+import {ChatService} from './chat.service';
+import {DrawingService} from './drawing.service';
+import {GameService} from './game.service';
 import { DrawingBoardComponent } from './drawing-board/drawing-board.component';
 
 @NgModule({

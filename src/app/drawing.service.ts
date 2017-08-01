@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Path} from "./drawing-board.directive";
+import {Path} from "./drawing-board/models";
 
 @Injectable()
 export class DrawingService {

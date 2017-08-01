@@ -1,20 +1,17 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {DrawingBoardDirective} from "../drawing-board.directive";
-import {Path} from "../drawing-board.directive";
-import {Point} from "../drawing-board.directive";
-import {ViewPort} from "../drawing-board.directive";
-import {ToolData} from "../drawing-board.directive";
-
+import {DrawingBoardDirective} from './drawing-board.directive';
+import {ToolData} from './tools';
+import {ViewPort} from './models';
 
 @Component({
   selector: 'app-drawing-board',
   templateUrl: './drawing-board.component.html',
   styleUrls: ['./drawing-board.component.css'],
-  //directives: [DrawingBoardDirective],
 })
 export class DrawingBoardComponent implements OnInit {
 
   @Output() newToolData: EventEmitter<ToolData>;
+  @Output() newDrawingCommand: EventEmitter<string>;
   @Output() viewPortChange: EventEmitter<ViewPort>;
 
   @Input() drawingColor = '#44bbff';
@@ -29,22 +26,23 @@ export class DrawingBoardComponent implements OnInit {
 
   viewPort: ViewPort = new ViewPort(800, 600);
 
-  moving: boolean = false;
+  moving = false;
 
   constructor() {
     this.newToolData = new EventEmitter<ToolData>();
     this.viewPortChange = new EventEmitter<ViewPort>();
+    this.newDrawingCommand = new EventEmitter<string>();
   }
 
   ngOnInit(): void {
     this.viewPort.changeCommit.subscribe((viewPort) => {
       this.viewPortChange.next(viewPort);
     });
+    this.persistentBoard.newCommand.subscribe(command => this.newDrawingCommand.next(command));
   }
 
   toolDataAdded(path: ToolData): void {
-    //console.log(path);
-    this.tempBoard.reset();
+    this.tempBoard.applyReset();
     this.newToolData.next(path);
     this.persistentBoard.addToolData(path);
   }
@@ -54,37 +52,22 @@ export class DrawingBoardComponent implements OnInit {
   }
 
   reset(): void {
-    this.persistentBoard.reset();
+    this.persistentBoard.applyReset();
   }
 
   undo(): void {
-    this.persistentBoard.undo();
+    this.persistentBoard.applyUndo();
   }
 
   addToolData(path: ToolData): void {
     this.persistentBoard.addToolData(path);
   }
 
-  zoomIn() {
-    this.viewPort.zoomBy(2);
+  applyDrawingCommand(command: string) {
+    console.log(this.persistentBoard);
+    this.persistentBoard.applyCommand(command);
   }
 
-  zoomOut() {
-    this.viewPort.zoomBy(0.5);
-  }
-
-  moveUp() {
-    this.viewPort.moveBy(-10, 0);
-  }
-  moveDown() {
-    this.viewPort.moveBy(10, 0);
-  }
-  moveRight() {
-    this.viewPort.moveBy(0, 10);
-  }
-  moveLeft() {
-    this.viewPort.moveBy(0, -10);
-  }
   resize() {
     this.viewPort.resize(this.drawingWidth, this.drawingHeight);
   }

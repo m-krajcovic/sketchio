@@ -1,8 +1,7 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {DrawingBoardDirective, Path} from "./drawing-board.directive";
-import {GameService} from "./game.service";
-import {DrawingBoardComponent} from "./drawing-board/drawing-board.component";
-import { ChatComponent } from "./chat/chat.component";
+import {GameService} from './game.service';
+import {DrawingBoardComponent} from './drawing-board/drawing-board.component';
+import { ChatComponent } from './chat/chat.component';
 
 @Component({
   selector: 'app-root',
@@ -10,8 +9,6 @@ import { ChatComponent } from "./chat/chat.component";
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-
-  savedPaths: Path[] = [];
 
   gameId: string;
 
@@ -29,6 +26,8 @@ export class AppComponent implements OnInit {
     this._gameService.newToolData.subscribe(toolData => this.drawingBoard.addToolData(toolData));
     this.drawingBoard.viewPortChange.subscribe(viewPort => this._gameService.sendViewPortChange(viewPort));
     this._gameService.viewPortChange.subscribe(viewPort => this.drawingBoard.changeViewPort(viewPort));
+    this.drawingBoard.newDrawingCommand.subscribe(command => this._gameService.sendNewDrawingCommand(command));
+    this._gameService.newDrawingCommand.subscribe(command => this.drawingBoard.applyDrawingCommand(command));
   }
 
   notifyNewPlayer(name): void {

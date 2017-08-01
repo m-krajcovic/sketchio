@@ -1,8 +1,7 @@
 import {EventEmitter, Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
-import {Path} from "./drawing-board.directive";
-import {ToolData} from "./drawing-board.directive";
-import {ViewPort} from "./drawing-board.directive";
+import {ToolData} from './drawing-board/tools';
+import {ViewPort} from './drawing-board/models';
 
 export class Player {
 
@@ -11,16 +10,17 @@ export class Player {
 @Injectable()
 export class GameService {
 
-  newToolData:EventEmitter<ToolData>;
-  gameIdChange:EventEmitter<string>;
-  newPlayer:EventEmitter<string>;
-  gameJoined:EventEmitter<string>;
-  viewPortChange:EventEmitter<ViewPort>;
+  newToolData: EventEmitter<ToolData>;
+  gameIdChange: EventEmitter<string>;
+  newPlayer: EventEmitter<string>;
+  gameJoined: EventEmitter<string>;
+  viewPortChange: EventEmitter<ViewPort>;
+  newDrawingCommand: EventEmitter<string>;
 
-  gameId:string;
-  socketId:string;
-  me:Player;
-  players:Player[];
+  gameId: string;
+  socketId: string;
+  me: Player;
+  players: Player[];
 
   socket;
 
@@ -30,29 +30,31 @@ export class GameService {
     this.newPlayer = new EventEmitter<string>();
     this.gameJoined = new EventEmitter<string>();
     this.viewPortChange = new EventEmitter<ViewPort>();
+    this.newDrawingCommand = new EventEmitter<string>();
     this.socket = io.connect();
     this.socket.on('connected', this.onConnected.bind(this));
     this.socket.on('newGameCreated', this.onNewGameCreated.bind(this));
     this.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom.bind(this));
-    this.socket.on('newPath', this.onNewPath.bind(this));
+    this.socket.on('newToolData', this.onNewToolData.bind(this));
     this.socket.on('viewPortChange', this.onViewPortChange.bind(this));
+    this.socket.on('newDrawingCommand', this.onNewDrawingCommand.bind(this));
   }
 
-  startGame():void {
+  startGame(): void {
     this.socket.emit('hostCreateNewGame');
   }
 
-  onNewGameCreated(data):void {
+  onNewGameCreated(data): void {
     this.gameId = data.gameId;
     this.gameIdChange.next(this.gameId);
   }
 
-  onConnected():void {
+  onConnected(): void {
     this.socketId = this.socket.id;
   }
 
-  joinGame(gameId:string) {
-    let data = {
+  joinGame(gameId: string) {
+    const data = {
       gameId: gameId,
       playerName: 'anon'
     };
@@ -72,7 +74,7 @@ export class GameService {
     }
   }
 
-  onNewPath(data) {
+  onNewToolData(data) {
     if (data.originSocketId !== this.socketId) {
       this.newToolData.next(data.toolData);
     }
@@ -84,8 +86,14 @@ export class GameService {
     }
   }
 
-  sendNewToolData(toolData:ToolData):void {
-    this.socket.emit('newPath', {
+  onNewDrawingCommand(data) {
+    if (data.originSocketId !== this.socketId) {
+      this.newDrawingCommand.next(data.command);
+    }
+  }
+
+  sendNewToolData(toolData: ToolData): void {
+    this.socket.emit('newToolData', {
       gameId: this.gameId,
       originSocketId: this.socketId,
       toolData: toolData
@@ -93,8 +101,8 @@ export class GameService {
 
   }
 
-  sendViewPortChange(viewPort:ViewPort) {
-    var varArgs = {
+  sendViewPortChange(viewPort: ViewPort) {
+    const varArgs = {
       gameId: this.gameId,
       originSocketId: this.socketId,
       viewPort: {
@@ -105,5 +113,13 @@ export class GameService {
       }
     };
     this.socket.emit('viewPortChange', varArgs);
+  }
+
+  sendNewDrawingCommand(command: string) {
+    this.socket.emit('newDrawingCommand', {
+      gameId: this.gameId,
+      originSocketId: this.socketId,
+      command: command
+    });
   }
 }
