@@ -21,7 +21,7 @@ export class DrawingBoardDirective implements OnInit {
   @Output() newToolData: EventEmitter<ToolData>;
   @Output() newCommand: EventEmitter<string>;
 
-  private ctx: any;
+  ctx: any;
   private element: any;
   private drawingToolData: ToolData[] = [];
   private currentToolData: ToolData = null;
