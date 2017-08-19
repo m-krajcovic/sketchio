@@ -12,14 +12,15 @@ export class DrawingBoardDirective implements OnInit {
   @Input() drawingSize = 5;
   @Input() drawingDisabled = false;
 
-  @Input() drawingHeight = 600;
-  @Input() drawingWidth = 800;
 
-  @Input() viewPort: ViewPort = new ViewPort(800, 600);
+  @Input() viewPort: ViewPort = new ViewPort();
   @Input() currentTool: Tool;
 
   @Output() newToolData: EventEmitter<ToolData>;
   @Output() newCommand: EventEmitter<string>;
+
+  private _drawingHeight = 600;
+  private _drawingWidth = 800;
 
   ctx: any;
   private element: any;
@@ -40,8 +41,8 @@ export class DrawingBoardDirective implements OnInit {
   }
 
   ngOnInit(): void {
-    this.element.width = this.drawingWidth;
-    this.element.height = this.drawingHeight;
+    this.element.width = this._drawingWidth;
+    this.element.height = this._drawingHeight;
     this.tools = {
       'pencil': new PencilTool(this),
       'move': new MoveTool(this),
@@ -53,6 +54,28 @@ export class DrawingBoardDirective implements OnInit {
       let lastTool: Tool = null;
       this.element.addEventListener('mousedown', (event) => {
         if (!this.drawingDisabled) {
+          if (event.offsetX !== undefined) {
+            last.x = event.offsetX;
+            last.y = event.offsetY;
+          } else { // Firefox compatibility
+            last.x = event.layerX - event.currentTarget.offsetLeft;
+            last.y = event.layerY - event.currentTarget.offsetTop;
+          }
+          if (event.button === 1) {
+            lastTool = this.currentTool;
+            this.selectTool('move');
+          }
+          this.currentToolData = new ToolData();
+          this.currentToolData.tool = this.currentTool.getName();
+          this.currentToolData.toolType = this.currentTool.getType();
+          this.currentToolData.data = this.currentTool.mouseDown(new Point(last.x, last.y));
+          if (this.currentToolData.toolType === ToolType.drawing) {
+            this.drawingToolData.push(this.currentToolData);
+          }
+        }
+      });
+      this.element.addEventListener('mouseenter', (event) => {
+        if (!this.drawingDisabled && event.which === 1) {
           if (event.offsetX !== undefined) {
             last.x = event.offsetX;
             last.y = event.offsetY;
@@ -90,7 +113,19 @@ export class DrawingBoardDirective implements OnInit {
         }
       });
       this.element.addEventListener('mouseup', (event) => {
-        if (!this.drawingDisabled) {
+        if (!this.drawingDisabled && (this.currentToolData)) {
+          this.currentTool.mouseUp();
+          if (this.currentToolData && this.currentToolData.toolType === ToolType.drawing) {
+            this.newToolData.next(this.currentToolData);
+          }
+          this.currentToolData = null;
+          if (event.button === 1) {
+            this.currentTool = lastTool;
+          }
+        }
+      });
+      this.element.addEventListener('mouseleave', (event) => {
+        if (!this.drawingDisabled && (this.currentToolData)) {
           this.currentTool.mouseUp();
           if (this.currentToolData && this.currentToolData.toolType === ToolType.drawing) {
             this.newToolData.next(this.currentToolData);
@@ -142,9 +177,20 @@ export class DrawingBoardDirective implements OnInit {
     }
   }
 
+  @Input()
+  set drawingHeight(value) {
+    this._drawingHeight = value;
+    this.redraw();
+  }
+
+  @Input()
+  set drawingWidth(value) {
+    this._drawingWidth = value;
+    this.redraw();
+  }
   redraw(): void {
-    this.element.width = this.drawingWidth;
-    this.element.height = this.drawingHeight;
+    this.element.width = this._drawingWidth;
+    this.element.height = this._drawingHeight;
     this.drawingToolData.forEach(toolPath => {
       const tool = this.tools[toolPath.tool];
       tool.draw(toolPath.data);

@@ -24,7 +24,7 @@ export class DrawingBoardComponent implements OnInit {
   @ViewChild('tempBoard') tempBoard: DrawingBoardDirective;
   @ViewChild('persistentBoard') persistentBoard: DrawingBoardDirective;
 
-  viewPort: ViewPort = new ViewPort(800, 600);
+  viewPort: ViewPort = new ViewPort();
 
   moving = false;
 
@@ -66,10 +66,6 @@ export class DrawingBoardComponent implements OnInit {
   applyDrawingCommand(command: string) {
     console.log(this.persistentBoard);
     this.persistentBoard.applyCommand(command);
-  }
-
-  resize() {
-    this.viewPort.resize(this.drawingWidth, this.drawingHeight);
   }
 
   toggleMovingTool() {

@@ -43,7 +43,6 @@ export class AppComponent implements OnInit {
   onResize(event) {
     this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
     this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
-    this.drawingBoard.resize();
   }
 
   notifyNewPlayer(name): void {

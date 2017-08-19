@@ -31,9 +31,9 @@ export class ViewPort {
   zoom: number;
   start: Point;
 
-  constructor(width: number, height: number) {
-    this.width = width;
-    this.height = height;
+  constructor() {
+    // this.width = width;
+    // this.height = height;
     this.zoom = 1;
     this.start = new Point(0, 0);
 
