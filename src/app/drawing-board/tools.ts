@@ -165,3 +165,38 @@ export class MoveTool implements Tool {
   wheel(event) {
   }
 }
+
+export class EraserTool implements Tool {
+
+  private drawingToolData: ToolData[];
+
+  constructor(drawingToolData: ToolData[]) {
+    this.drawingToolData = drawingToolData;
+  }
+
+  getName(): string {
+    return undefined;
+  }
+
+  getType(): ToolType {
+    return undefined;
+  }
+
+  mouseDown(last: Point): any {
+    return undefined;
+  }
+
+  mouseMove(current: Point, last: Point) {
+  }
+
+  mouseUp() {
+  }
+
+  wheel(event) {
+  }
+
+  interesects(current: Point): boolean {
+
+    return false;
+  }
+}

@@ -2,10 +2,15 @@
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top:0;
+  left:0;
 }
 
 .container .row {
-  flex: 1 1 100%;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: row;
 }
@@ -25,4 +30,19 @@
 
 .bordered:first-of-type {
   border-left: 1px solid #000000;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.chat {
+  flex: 1 1 25%;
+}
+
+.drawing-board {
+  flex: 1 1 75%;
+  overflow: hidden;
 }

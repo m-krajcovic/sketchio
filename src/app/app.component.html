@@ -4,12 +4,12 @@
     <button (click)="join()">Join</button>
     <input type="text" [(ngModel)]="gameId" title="Game Id"/>
   </div>
-  <div class="row">
-    <div class="bordered">
+  <div class="app-container row">
+    <div class="chat bordered">
       <app-chat #chat></app-chat>
     </div>
-    <div class="bordered">
-      <app-drawing-board #drawingBoard [drawingWidth]="800" [drawingHeight]="600"></app-drawing-board>
+    <div class="drawing-board bordered" #drawingBoardContainer>
+      <app-drawing-board #drawingBoard [drawingWidth]="drawingWidth" [drawingHeight]="drawingHeight"></app-drawing-board>
     </div>
   </div>
 </div>

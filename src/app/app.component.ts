@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {GameService} from './game.service';
 import {DrawingBoardComponent} from './drawing-board/drawing-board.component';
 import { ChatComponent } from './chat/chat.component';
@@ -15,6 +15,11 @@ export class AppComponent implements OnInit {
   @ViewChild('drawingBoard') drawingBoard: DrawingBoardComponent;
   @ViewChild('chat') chat: ChatComponent;
 
+  @ViewChild('drawingBoardContainer') drawingBoardContainer: ElementRef;
+
+  drawingWidth = 800;
+  drawingHeight = 600;
+
   constructor(private _gameService: GameService) {
   }
 
@@ -28,6 +33,17 @@ export class AppComponent implements OnInit {
     this._gameService.viewPortChange.subscribe(viewPort => this.drawingBoard.changeViewPort(viewPort));
     this.drawingBoard.newDrawingCommand.subscribe(command => this._gameService.sendNewDrawingCommand(command));
     this._gameService.newDrawingCommand.subscribe(command => this.drawingBoard.applyDrawingCommand(command));
+
+    this.drawingHeight = this.drawingBoardContainer.nativeElement.offsetHeight;
+    this.drawingWidth = this.drawingBoardContainer.nativeElement.offsetWidth;
+    // this.drawingBoard.resize();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
+    this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
+    this.drawingBoard.resize();
   }
 
   notifyNewPlayer(name): void {

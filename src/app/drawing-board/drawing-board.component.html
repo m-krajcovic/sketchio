@@ -2,8 +2,6 @@
   <canvas appDrawingBoard #persistentBoard="appDrawingBoard"
           [viewPort]="viewPort"
           [drawingDisabled]="true"
-          [width]="drawingWidth"
-          [height]="drawingHeight"
           [drawingWidth]="drawingWidth"
           [drawingHeight]="drawingHeight"></canvas>
   <canvas appDrawingBoard #tempBoard="appDrawingBoard"
@@ -11,8 +9,6 @@
           [drawingDisabled]="drawingDisabled"
           [drawingSize]="drawingSize"
           [drawingColor]="drawingColor"
-          [width]="drawingWidth"
-          [height]="drawingHeight"
           [drawingWidth]="drawingWidth"
           [drawingHeight]="drawingHeight"
           (newToolData)="toolDataAdded($event)"></canvas>

@@ -1,6 +1,6 @@
 .chat {
-  width: 300px;
-  height: 600px;
+  /*width: 300px;*/
+  height: 100%;
   background-color: rgba(0,0,0,0.02);
   color: rgba(0, 0, 0, 0.6);
 }

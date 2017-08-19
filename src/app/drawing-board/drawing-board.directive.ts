@@ -40,6 +40,8 @@ export class DrawingBoardDirective implements OnInit {
   }
 
   ngOnInit(): void {
+    this.element.width = this.drawingWidth;
+    this.element.height = this.drawingHeight;
     this.tools = {
       'pencil': new PencilTool(this),
       'move': new MoveTool(this),
@@ -141,7 +143,8 @@ export class DrawingBoardDirective implements OnInit {
   }
 
   redraw(): void {
-    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.element.width = this.drawingWidth;
+    this.element.height = this.drawingHeight;
     this.drawingToolData.forEach(toolPath => {
       const tool = this.tools[toolPath.tool];
       tool.draw(toolPath.data);
