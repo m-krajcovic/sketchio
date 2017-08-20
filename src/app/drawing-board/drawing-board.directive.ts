@@ -35,7 +35,7 @@ export class DrawingBoardDirective implements OnInit {
   };
 
   private lastPoint: Point = new Point();
-  private lastTool: Tool;
+  private lastTool: Tool = null;
 
   constructor(private el: ElementRef) {
     this.newToolData = new EventEmitter<ToolData>();
@@ -189,8 +189,9 @@ export class DrawingBoardDirective implements OnInit {
         this.newToolData.next(this.currentToolData);
       }
       this.currentToolData = null;
-      if ((event.button && event.button === 1) || (event.touches && event.touches.length > 1)) {
+      if (this.lastTool) {
         this.currentTool = this.lastTool;
+        this.lastTool = null;
       }
     }
   }
