@@ -68,6 +68,14 @@ export class ViewPort {
   }
 
 
+  translateXToCanvas(x: number) {
+    return (x - (this.start.x)) * this.zoom;
+  }
+
+  translateYToCanvas(y: number) {
+    return ((y - (this.start.y)) * this.zoom);
+  }
+
   translatePointToCanvas(point: Point) {
     const newPoint = new Point();
     newPoint.x = (point.x - (this.start.x)) * this.zoom;

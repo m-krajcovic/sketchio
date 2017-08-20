@@ -15,6 +15,7 @@ export class DrawingBoardDirective implements OnInit {
 
   @Input() viewPort: ViewPort = new ViewPort();
   @Input() currentTool: Tool;
+  @Input() private drawGrid: boolean = false;
 
   @Output() newToolData: EventEmitter<ToolData>;
   @Output() newCommand: EventEmitter<string>;
@@ -175,6 +176,7 @@ export class DrawingBoardDirective implements OnInit {
         }
       });
     }
+    this.redraw();
   }
 
   @Input()
@@ -195,6 +197,48 @@ export class DrawingBoardDirective implements OnInit {
       const tool = this.tools[toolPath.tool];
       tool.draw(toolPath.data);
     });
+    if (this.drawGrid) {
+      const startX = this.viewPort.start.x;
+      const startY = this.viewPort.start.y;
+      console.log(this.viewPort.zoom);
+      let step = 50;
+      if (this.viewPort.zoom >= 0.5) {
+        step = 50;
+        let zoom = 2.5;
+        while (this.viewPort.zoom >= zoom) {
+          zoom = zoom * 5;
+          step = step / 10;
+        }
+      } else {
+        step = 500;
+        let zoom = 0.1;
+        while (this.viewPort.zoom <= zoom) {
+          zoom = zoom / 5;
+          step = step * 10;
+        }
+      }
+      for (let x = startX - (startX % step); x < startX + (this._drawingWidth / this.viewPort.zoom); x += step) {
+        this.ctx.lineWidth = 1;
+        this.ctx.globalAlpha = x % (step * 10) === 0 ? 1 : 0.2;
+        this.ctx.strokeStyle = "#000000";
+        this.ctx.beginPath();
+        let canvasX = this.viewPort.translateXToCanvas(x);
+        this.ctx.moveTo(canvasX, 0);
+        this.ctx.lineTo(canvasX, this._drawingHeight);
+        this.ctx.stroke();
+      }
+      for (let y = startY - (startY % step); y < startY + (this._drawingHeight / this.viewPort.zoom); y += step) {
+        this.ctx.lineWidth = 1;
+        this.ctx.globalAlpha = y % (step * 10) === 0 ? 1 : 0.2;
+        this.ctx.strokeStyle = "#000000";
+        this.ctx.beginPath();
+        let canvasY = this.viewPort.translateYToCanvas(y);
+        this.ctx.moveTo(0, canvasY);
+        this.ctx.lineTo(this._drawingWidth, canvasY);
+        this.ctx.stroke();
+      }
+    }
+    this.ctx.globalAlpha = 1;
   }
 
   addToolData(toolData: ToolData): void {
@@ -220,6 +264,7 @@ export class DrawingBoardDirective implements OnInit {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.drawingToolData = [];
     this.currentToolData = null;
+    this.redraw();
   }
 
   private undo(): void {

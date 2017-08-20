@@ -3,34 +3,32 @@
   height: 100%;
 }
 
+.game-container {
+  position: fixed;
+  display: flex;
+  /*grid-template-columns: auto;*/
+  /*grid-template-rows: 80% 20%;*/
+  /*grid-row-gap: 0;*/
+  flex-direction: column;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 .chat-container {
-  flex: 0 0 300px;
+  background-color: white;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 20%;
+  overflow:auto;
+  z-index: 999;
 }
 
 .drawing-board-container {
-  flex: 0 0 800px;
-}
-
-.bordered {
-  border: 1px solid #000000;
-  border-left: none;
-}
-
-.bordered:first-of-type {
-  border-left: 1px solid #000000;
-}
-
-.game-container {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-}
-
-.chat {
-  flex: 1 1 25%;
-}
-
-.drawing-board {
-  flex: 1 1 75%;
-  overflow: hidden;
+  /*overflow: hidden;*/
+  /*height: 100%;*/
+  flex: 1 1 100%
 }

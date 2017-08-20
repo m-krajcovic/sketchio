@@ -2,19 +2,3 @@
 * {
   font-family: 'Roboto', sans-serif;
 }
-.container {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  top:0;
-  left:0;
-}
-
-.row {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: row;
-}

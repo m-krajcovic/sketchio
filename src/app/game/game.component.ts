@@ -52,8 +52,10 @@ export class GameComponent implements OnInit {
     this.drawingBoard.newDrawingCommand.subscribe(command => this._gameService.sendNewDrawingCommand(command));
     this._gameService.newDrawingCommand.subscribe(command => this.drawingBoard.applyDrawingCommand(command));
 
-    this.drawingHeight = this.drawingBoardContainer.nativeElement.offsetHeight;
-    this.drawingWidth = this.drawingBoardContainer.nativeElement.offsetWidth;
+    console.log(this.drawingBoardContainer.nativeElement.clientHeight);
+    console.log(this.drawingBoardContainer.nativeElement.clientWidth);
+    this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
+    this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
   }
 
   @HostListener('window:resize', ['$event'])
