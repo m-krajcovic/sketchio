@@ -10,18 +10,37 @@ import {ChatService} from './chat.service';
 import {DrawingService} from './drawing.service';
 import {GameService} from './game.service';
 import { DrawingBoardComponent } from './drawing-board/drawing-board.component';
+import { StartComponent } from './start/start.component';
+import {RouterModule} from "@angular/router";
+import {GameComponent} from "./game/game.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     DrawingBoardDirective,
     ChatComponent,
-    DrawingBoardComponent
+    DrawingBoardComponent,
+    StartComponent,
+    GameComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    RouterModule.forRoot([
+      {
+        path: '',
+        component: StartComponent
+      },
+      {
+        path: 'game/:gameId',
+        component: GameComponent
+      },
+      {
+        path: 'game',
+        component: GameComponent
+      }
+    ])
   ],
   providers: [ChatService, DrawingService, GameService],
   bootstrap: [AppComponent]

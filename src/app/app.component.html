@@ -1,15 +1,3 @@
 <div class="container">
-  <div class="row">
-    <button (click)="create()">Create</button>
-    <button (click)="join()">Join</button>
-    <input type="text" [(ngModel)]="gameId" title="Game Id"/>
-  </div>
-  <div class="app-container row">
-    <div class="chat bordered">
-      <app-chat #chat></app-chat>
-    </div>
-    <div class="drawing-board bordered" #drawingBoardContainer>
-      <app-drawing-board #drawingBoard [drawingWidth]="drawingWidth" [drawingHeight]="drawingHeight"></app-drawing-board>
-    </div>
-  </div>
+  <router-outlet></router-outlet>
 </div>

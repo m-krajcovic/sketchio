@@ -38,6 +38,7 @@ export class GameService {
     this.socket.on('newToolData', this.onNewToolData.bind(this));
     this.socket.on('viewPortChange', this.onViewPortChange.bind(this));
     this.socket.on('newDrawingCommand', this.onNewDrawingCommand.bind(this));
+    this.socket.on('failedRoomJoin', this.onFailedRoomJoin.bind(this));
   }
 
   startGame(): void {
@@ -54,13 +55,15 @@ export class GameService {
   }
 
   joinGame(gameId: string) {
-    const data = {
-      gameId: gameId,
-      playerName: 'anon'
-    };
+    if (this.gameId !== gameId) {
+      const data = {
+        gameId: gameId,
+        playerName: 'anon'
+      };
 
-    // Send the gameId and playerName to the server
-    this.socket.emit('playerJoinGame', data);
+      // Send the gameId and playerName to the server
+      this.socket.emit('playerJoinGame', data);
+    }
   }
 
 
@@ -90,6 +93,10 @@ export class GameService {
     if (data.originSocketId !== this.socketId) {
       this.newDrawingCommand.next(data.command);
     }
+  }
+
+  onFailedRoomJoin(data) {
+    console.log("this room does not exist!");
   }
 
   sendNewToolData(toolData: ToolData): void {

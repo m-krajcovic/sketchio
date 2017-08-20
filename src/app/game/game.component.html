@@ -1,0 +1,8 @@
+  <div class="game-container row">
+    <div *ngIf="gameId" class="chat bordered">
+      <app-chat #chat></app-chat>
+    </div>
+    <div class="drawing-board bordered" #drawingBoardContainer>
+      <app-drawing-board #drawingBoard [drawingWidth]="drawingWidth" [drawingHeight]="drawingHeight"></app-drawing-board>
+    </div>
+  </div>

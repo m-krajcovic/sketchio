@@ -64,7 +64,6 @@ export class DrawingBoardComponent implements OnInit {
   }
 
   applyDrawingCommand(command: string) {
-    console.log(this.persistentBoard);
     this.persistentBoard.applyCommand(command);
   }
 
