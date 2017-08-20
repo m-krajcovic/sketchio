@@ -34,6 +34,9 @@ export class DrawingBoardDirective implements OnInit {
     'reset': this.reset.bind(this),
   };
 
+  private lastPoint: Point = new Point();
+  private lastTool: Tool;
+
   constructor(private el: ElementRef) {
     this.newToolData = new EventEmitter<ToolData>();
     this.newCommand = new EventEmitter<string>();
@@ -51,132 +54,145 @@ export class DrawingBoardDirective implements OnInit {
     this.currentTool = this.tools['pencil'];
     this.viewPort.change.subscribe(() => this.redraw());
     if (!this.drawingDisabled) {
-      const last: Point = new Point();
-      let lastTool: Tool = null;
       this.element.addEventListener('mousedown', (event) => {
-        if (!this.drawingDisabled) {
-          if (event.offsetX !== undefined) {
-            last.x = event.offsetX;
-            last.y = event.offsetY;
-          } else { // Firefox compatibility
-            last.x = event.layerX - event.currentTarget.offsetLeft;
-            last.y = event.layerY - event.currentTarget.offsetTop;
-          }
-          if (event.button === 1) {
-            lastTool = this.currentTool;
-            this.selectTool('move');
-          }
-          this.currentToolData = new ToolData();
-          this.currentToolData.tool = this.currentTool.getName();
-          this.currentToolData.toolType = this.currentTool.getType();
-          this.currentToolData.data = this.currentTool.mouseDown(new Point(last.x, last.y));
-          if (this.currentToolData.toolType === ToolType.drawing) {
-            this.drawingToolData.push(this.currentToolData);
-          }
-        }
+        this._mouseDownHandler(event);
       });
       this.element.addEventListener('mouseenter', (event) => {
-        if (!this.drawingDisabled && event.which === 1) {
-          if (event.offsetX !== undefined) {
-            last.x = event.offsetX;
-            last.y = event.offsetY;
-          } else { // Firefox compatibility
-            last.x = event.layerX - event.currentTarget.offsetLeft;
-            last.y = event.layerY - event.currentTarget.offsetTop;
-          }
-          if (event.button === 1) {
-            lastTool = this.currentTool;
-            this.selectTool('move');
-          }
-          this.currentToolData = new ToolData();
-          this.currentToolData.tool = this.currentTool.getName();
-          this.currentToolData.toolType = this.currentTool.getType();
-          this.currentToolData.data = this.currentTool.mouseDown(new Point(last.x, last.y));
-          if (this.currentToolData.toolType === ToolType.drawing) {
-            this.drawingToolData.push(this.currentToolData);
-          }
+        if (event.which === 1) {
+          this._mouseDownHandler(event);
         }
       });
       this.element.addEventListener('mousemove', (event) => {
-        if (!this.drawingDisabled && (this.currentToolData)) {
-          let currentX, currentY;
-          if (event.offsetX !== undefined) {
-            currentX = event.offsetX;
-            currentY = event.offsetY;
-          } else {
-            currentX = event.layerX - event.currentTarget.offsetLeft;
-            currentY = event.layerY - event.currentTarget.offsetTop;
-          }
-
-          this.currentTool.mouseMove(new Point(currentX, currentY), last);
-          last.x = currentX;
-          last.y = currentY;
-        }
+        this._mouseMoveHandler(event);
       });
       this.element.addEventListener('mouseup', (event) => {
-        if (!this.drawingDisabled && (this.currentToolData)) {
-          this.currentTool.mouseUp();
-          if (this.currentToolData && this.currentToolData.toolType === ToolType.drawing) {
-            this.newToolData.next(this.currentToolData);
-          }
-          this.currentToolData = null;
-          if (event.button === 1) {
-            this.currentTool = lastTool;
-          }
-        }
+        this._mouseUpHandler(event);
       });
       this.element.addEventListener('mouseleave', (event) => {
-        if (!this.drawingDisabled && (this.currentToolData)) {
-          this.currentTool.mouseUp();
-          if (this.currentToolData && this.currentToolData.toolType === ToolType.drawing) {
-            this.newToolData.next(this.currentToolData);
-          }
-          this.currentToolData = null;
-          if (event.button === 1) {
-            this.currentTool = lastTool;
-          }
-        }
+        this._mouseUpHandler(event);
       });
-      let zoomCommitHandle = null;
       this.element.addEventListener('wheel', (event) => {
-        if (!this.drawingDisabled) {
-          let currentX, currentY;
-          if (event.offsetX !== undefined) {
-            currentX = event.offsetX;
-            currentY = event.offsetY;
-          } else {
-            currentX = event.layerX - event.currentTarget.offsetLeft;
-            currentY = event.layerY - event.currentTarget.offsetTop;
-          }
-
-          // zoom on scroll, doesn't matter which tool
-          if (event.deltaY !== 0) {
-            if (event.deltaY > 0) {
-              const vpPoint = this.viewPort.translatePointToViewPort(new Point(currentX, currentY));
-              this.viewPort.zoomBy(0.9);
-              const afterPoint = this.viewPort.translatePointToCanvas(vpPoint);
-              this.viewPort.moveBy(
-                (afterPoint.y - currentY) / this.viewPort.zoom,
-                (afterPoint.x - currentX) / this.viewPort.zoom);
-            } else if (event.deltaY < 0) {
-              const vpPoint = this.viewPort.translatePointToViewPort(new Point(currentX, currentY));
-              this.viewPort.zoomBy(1.1);
-              const afterPoint = this.viewPort.translatePointToCanvas(vpPoint);
-              this.viewPort.moveBy(
-                (afterPoint.y - currentY) / this.viewPort.zoom,
-                (afterPoint.x - currentX) / this.viewPort.zoom);
-            }
-            clearTimeout(zoomCommitHandle);
-            zoomCommitHandle = setTimeout(() => {
-              // commit viewport change
-              this.viewPort.commitChange();
-              zoomCommitHandle = null;
-            }, 250);
-          }
-        }
+        this._mouseWheelHandler(event);
       });
+
+      this.element.addEventListener('touchstart', (event) => {
+        console.log('touchstart', event);
+        this._mouseDownHandler(event);
+        event.preventDefault();
+      });
+      this.element.addEventListener('touchmove', (event) => {
+        console.log('touchmove', event);
+        this._mouseMoveHandler(event);
+        event.preventDefault();
+      });
+      this.element.addEventListener('touchend', (event) => {
+        console.log('touchend', event);
+        this._mouseUpHandler(event);
+        event.preventDefault();
+      });
+
     }
     this.redraw();
+  }
+
+  private zoomCommitHandle = null;
+  _mouseWheelHandler(event) {
+    if (!this.drawingDisabled) {
+      let currentX, currentY;
+      if (event.offsetX !== undefined) {
+        currentX = event.offsetX;
+        currentY = event.offsetY;
+      } else {
+        currentX = event.layerX - event.currentTarget.offsetLeft;
+        currentY = event.layerY - event.currentTarget.offsetTop;
+      }
+
+      // zoom on scroll, doesn't matter which tool
+      if (event.deltaY !== 0) {
+        if (event.deltaY > 0) {
+          const vpPoint = this.viewPort.translatePointToViewPort(new Point(currentX, currentY));
+          this.viewPort.zoomBy(0.9);
+          const afterPoint = this.viewPort.translatePointToCanvas(vpPoint);
+          this.viewPort.moveBy(
+            (afterPoint.y - currentY) / this.viewPort.zoom,
+            (afterPoint.x - currentX) / this.viewPort.zoom);
+        } else if (event.deltaY < 0) {
+          const vpPoint = this.viewPort.translatePointToViewPort(new Point(currentX, currentY));
+          this.viewPort.zoomBy(1.1);
+          const afterPoint = this.viewPort.translatePointToCanvas(vpPoint);
+          this.viewPort.moveBy(
+            (afterPoint.y - currentY) / this.viewPort.zoom,
+            (afterPoint.x - currentX) / this.viewPort.zoom);
+        }
+        clearTimeout(this.zoomCommitHandle);
+        this.zoomCommitHandle = setTimeout(() => {
+          // commit viewport change
+          this.viewPort.commitChange();
+          this.zoomCommitHandle = null;
+        }, 250);
+      }
+    }
+  }
+
+  _mouseMoveHandler(event) {
+    if (!this.drawingDisabled && (this.currentToolData)) {
+      let currentX, currentY;
+      if (event.offsetX !== undefined) {
+        currentX = event.offsetX;
+        currentY = event.offsetY;
+      } else if (event.layerX !== undefined) { // Firefox compatibility
+        currentX = event.layerX - event.currentTarget.offsetLeft;
+        currentY = event.layerY - event.currentTarget.offsetTop;
+      } else if (event.touches && event.touches.length) {
+        let touch = event.touches[0];
+        currentX = touch.clientX;
+        currentY = touch.clientY;
+      }
+
+      this.currentTool.mouseMove(new Point(currentX, currentY), this.lastPoint);
+      this.lastPoint.x = currentX;
+      this.lastPoint.y = currentY;
+    }
+  }
+
+  _mouseDownHandler(event) {
+    if (!this.drawingDisabled) {
+      if (event.offsetX !== undefined) {
+        this.lastPoint.x = event.offsetX;
+        this.lastPoint.y = event.offsetY;
+      } else if (event.layerX !== undefined) { // Firefox compatibility
+        this.lastPoint.x = event.layerX - event.currentTarget.offsetLeft;
+        this.lastPoint.y = event.layerY - event.currentTarget.offsetTop;
+      } else if (event.touches && event.touches.length) {
+        let touch = event.touches[0];
+        this.lastPoint.x = touch.clientX;
+        this.lastPoint.y = touch.clientY;
+      }
+      if ((event.button && event.button === 1) || (event.touches && event.touches.length > 1)) {
+        this.lastTool = this.currentTool;
+        this.selectTool('move');
+      }
+      this.currentToolData = new ToolData();
+      this.currentToolData.tool = this.currentTool.getName();
+      this.currentToolData.toolType = this.currentTool.getType();
+      this.currentToolData.data = this.currentTool.mouseDown(new Point(this.lastPoint.x, this.lastPoint.y));
+      if (this.currentToolData.toolType === ToolType.drawing) {
+        this.drawingToolData.push(this.currentToolData);
+      }
+    }
+  }
+
+  _mouseUpHandler(event) {
+    if (!this.drawingDisabled && (this.currentToolData)) {
+      this.currentTool.mouseUp();
+      if (this.currentToolData && this.currentToolData.toolType === ToolType.drawing) {
+        this.newToolData.next(this.currentToolData);
+      }
+      this.currentToolData = null;
+      if (event.button === 1) {
+        this.currentTool = this.lastTool;
+      }
+    }
   }
 
   @Input()
@@ -200,7 +216,6 @@ export class DrawingBoardDirective implements OnInit {
     if (this.drawGrid) {
       const startX = this.viewPort.start.x;
       const startY = this.viewPort.start.y;
-      console.log(this.viewPort.zoom);
       let step = 50;
       if (this.viewPort.zoom >= 0.5) {
         step = 50;
