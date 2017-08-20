@@ -204,16 +204,16 @@ export class DrawingBoardDirective implements OnInit {
       let step = 50;
       if (this.viewPort.zoom >= 0.5) {
         step = 50;
-        let zoom = 2.5;
+        let zoom = 5;
         while (this.viewPort.zoom >= zoom) {
-          zoom = zoom * 5;
+          zoom = zoom * 10;
           step = step / 10;
         }
       } else {
         step = 500;
-        let zoom = 0.1;
+        let zoom = 0.05;
         while (this.viewPort.zoom <= zoom) {
-          zoom = zoom / 5;
+          zoom = zoom / 10;
           step = step * 10;
         }
       }
