@@ -189,7 +189,7 @@ export class DrawingBoardDirective implements OnInit {
         this.newToolData.next(this.currentToolData);
       }
       this.currentToolData = null;
-      if (event.button === 1) {
+      if ((event.button && event.button === 1) || (event.touches && event.touches.length > 1)) {
         this.currentTool = this.lastTool;
       }
     }
