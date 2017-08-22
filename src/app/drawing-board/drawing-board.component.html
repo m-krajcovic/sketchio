@@ -12,6 +12,7 @@
           [drawingWidth]="drawingWidth"
           [drawingHeight]="drawingHeight"
           [drawGrid]="true"
+          [drawCursor]="true"
           (newToolData)="toolDataAdded($event)"></canvas>
   <div class="inputs-container" *ngIf="!drawingDisabled">
     <button (click)="reset()">Reset</button>

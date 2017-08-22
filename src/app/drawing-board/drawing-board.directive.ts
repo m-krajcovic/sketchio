@@ -16,6 +16,7 @@ export class DrawingBoardDirective implements OnInit {
   @Input() viewPort: ViewPort = new ViewPort();
   @Input() currentTool: Tool;
   @Input() private drawGrid: boolean = false;
+  @Input() private drawCursor: boolean = false;
 
   @Output() newToolData: EventEmitter<ToolData>;
   @Output() newCommand: EventEmitter<string>;
@@ -135,23 +136,26 @@ export class DrawingBoardDirective implements OnInit {
   }
 
   _mouseMoveHandler(event) {
+    let currentX, currentY;
+    if (event.offsetX !== undefined) {
+      currentX = event.offsetX;
+      currentY = event.offsetY;
+    } else if (event.layerX !== undefined) { // Firefox compatibility
+      currentX = event.layerX - event.currentTarget.offsetLeft;
+      currentY = event.layerY - event.currentTarget.offsetTop;
+    } else if (event.touches && event.touches.length) {
+      let touch = event.touches[0];
+      currentX = touch.clientX;
+      currentY = touch.clientY;
+    }
     if (!this.drawingDisabled && (this.currentToolData)) {
-      let currentX, currentY;
-      if (event.offsetX !== undefined) {
-        currentX = event.offsetX;
-        currentY = event.offsetY;
-      } else if (event.layerX !== undefined) { // Firefox compatibility
-        currentX = event.layerX - event.currentTarget.offsetLeft;
-        currentY = event.layerY - event.currentTarget.offsetTop;
-      } else if (event.touches && event.touches.length) {
-        let touch = event.touches[0];
-        currentX = touch.clientX;
-        currentY = touch.clientY;
-      }
 
       this.currentTool.mouseMove(new Point(currentX, currentY), this.lastPoint);
-      this.lastPoint.x = currentX;
-      this.lastPoint.y = currentY;
+    }
+    this.lastPoint.x = currentX;
+    this.lastPoint.y = currentY;
+    if (this.drawCursor) {
+      this.redraw();
     }
   }
 
@@ -207,6 +211,7 @@ export class DrawingBoardDirective implements OnInit {
     this._drawingWidth = value;
     this.redraw();
   }
+
   redraw(): void {
     this.element.width = this._drawingWidth;
     this.element.height = this._drawingHeight;
@@ -253,8 +258,16 @@ export class DrawingBoardDirective implements OnInit {
         this.ctx.lineTo(this._drawingWidth, canvasY);
         this.ctx.stroke();
       }
+      this.ctx.globalAlpha = 1;
     }
-    this.ctx.globalAlpha = 1;
+    if (this.drawCursor) {
+      this.ctx.lineWidth = 1;
+      this.ctx.globalAlpha = 0.6;
+      this.ctx.strokeStyle = "#000000";
+      this.ctx.beginPath();
+      this.ctx.arc(this.lastPoint.x,this.lastPoint.y, (this.drawingSize/2) * this.viewPort.zoom, 0, 2*Math.PI);
+      this.ctx.stroke();
+    }
   }
 
   addToolData(toolData: ToolData): void {

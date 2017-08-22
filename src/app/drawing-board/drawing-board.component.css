@@ -1,6 +1,6 @@
 .drawing-board {
   user-select: none;
-  cursor: crosshair;
+  cursor: none;
   position: relative;
 }
 
