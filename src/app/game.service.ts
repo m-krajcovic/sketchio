@@ -145,7 +145,7 @@ export class GameService {
 
   onLoadGameData(data) {
     if (!data.playerSocketId || data.playerSocketId === this.socketId) {
-      this.loadGameData.next(data.toolData);
+      this.loadedGameData.next(data.toolData);
     }
   }
 
