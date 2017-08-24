@@ -26,7 +26,7 @@ export class DrawingBoardDirective implements OnInit {
 
   ctx: any;
   private element: any;
-  private drawingToolData: ToolData[] = [];
+  public drawingToolData: ToolData[] = []; //refactor man, wtf is this shit
   private currentToolData: ToolData = null;
 
   private tools;

@@ -27,6 +27,8 @@ exports.initGame = function(sio, socket){
     gameSocket.on('playerAnswer', playerAnswer);
     gameSocket.on('playerRestart', playerRestart);
 
+    gameSocket.on('initGameData', sendGameDataToPlayer);
+
     gameSocket.on('hostGameIsRunning', hostGameIsRunning);
 
     gameSocket.on('sendNewMessage', newMessage);
@@ -145,6 +147,15 @@ function playerJoinGame(data) {
         // Otherwise, send an error message back to the player.
         this.emit('failedRoomJoin',{message: "This room does not exist."} );
     }
+}
+
+function sendGameDataToPlayer(data) {
+  let sock = this;
+  io.sockets.socket(data.playerSocketId).emit('loadGameData', data);
+}
+
+function sendGameDataToAll(data) {
+  io.sockets.in(data.gameId).emit('loadGameData', data);
 }
 
 /**

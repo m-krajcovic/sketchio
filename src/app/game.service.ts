@@ -16,7 +16,9 @@ export class GameService {
   gameJoined: EventEmitter<string>;
   viewPortChange: EventEmitter<ViewPort>;
   newDrawingCommand: EventEmitter<string>;
+  loadGameData: EventEmitter<ToolData>;
 
+  isHost: boolean = false;
   gameId: string;
   socketId: string;
   me: Player;
@@ -31,6 +33,7 @@ export class GameService {
     this.gameJoined = new EventEmitter<string>();
     this.viewPortChange = new EventEmitter<ViewPort>();
     this.newDrawingCommand = new EventEmitter<string>();
+    this.loadGameData = new EventEmitter<ToolData>();
     this.socket = io.connect();
     this.socket.on('connected', this.onConnected.bind(this));
     this.socket.on('newGameCreated', this.onNewGameCreated.bind(this));
@@ -38,6 +41,7 @@ export class GameService {
     this.socket.on('newToolData', this.onNewToolData.bind(this));
     this.socket.on('viewPortChange', this.onViewPortChange.bind(this));
     this.socket.on('newDrawingCommand', this.onNewDrawingCommand.bind(this));
+    this.socket.on('loadGameData', this.onLoadGameData.bind(this));
     this.socket.on('failedRoomJoin', this.onFailedRoomJoin.bind(this));
   }
 
@@ -46,6 +50,7 @@ export class GameService {
   }
 
   onNewGameCreated(data): void {
+    this.isHost = true;
     this.gameId = data.gameId;
     this.gameIdChange.next(this.gameId);
   }
@@ -71,9 +76,9 @@ export class GameService {
     if (this.socketId === data.originSocketId) {
       this.gameId = data.gameId;
       this.gameIdChange.next(this.gameId);
-      this.gameJoined.next(data.playerName);
+      this.gameJoined.next(data);
     } else {
-      this.newPlayer.next(data.playerName);
+      this.newPlayer.next(data);
     }
   }
 
@@ -105,7 +110,20 @@ export class GameService {
       originSocketId: this.socketId,
       toolData: toolData
     });
+  }
 
+  sendGameDataToPlayer(toolData, playerSocketId) {
+    this.socket.emit('initGameData', {
+      toolData: toolData,
+      originSocketId: this.socketId,
+      playerSocketId: playerSocketId,
+    });
+  }
+
+  onLoadGameData(data) {
+    if (!data.playerSocketId || data.playerSocketId === this.socketId) {
+      this.loadGameData.next(data.toolData);
+    }
   }
 
   sendViewPortChange(viewPort: ViewPort) {

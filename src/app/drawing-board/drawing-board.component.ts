@@ -74,4 +74,13 @@ export class DrawingBoardComponent implements OnInit {
       this.tempBoard.selectTool('pencil');
     }
   }
+
+  get toolData(): ToolData[] {
+    return this.persistentBoard.drawingToolData;
+  }
+
+  set toolData(value) {
+    this.persistentBoard.drawingToolData = value;
+    this.persistentBoard.redraw();
+  }
 }

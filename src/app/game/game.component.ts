@@ -39,8 +39,16 @@ export class GameComponent implements OnInit {
     });
 
     this._gameService.gameIdChange.subscribe(gameId => this.gameId = gameId);
-    this._gameService.newPlayer.subscribe(name => this.notifyNewPlayer(name));
-    this._gameService.gameJoined.subscribe(name => this.notifyWelcome(name));
+    this._gameService.newPlayer.subscribe(player => {
+      this.notifyNewPlayer(player.playerName);
+      if (this._gameService.isHost) {
+        this._gameService.sendGameDataToPlayer(this.drawingBoard.toolData, player.originSocketId);
+      }
+    });
+    this._gameService.loadGameData.subscribe(toolData => {
+      this.drawingBoard.toolData = toolData;
+    });
+    this._gameService.gameJoined.subscribe(player => this.notifyWelcome(player.playerName));
     this.drawingBoard.newToolData.subscribe(toolData => {
       if (toolData.tool === 'pencil') {
         this._gameService.sendNewToolData(toolData);
