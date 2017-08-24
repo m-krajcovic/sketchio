@@ -151,7 +151,7 @@ function playerJoinGame(data) {
 
 function sendGameDataToPlayer(data) {
   let sock = this;
-  io.sockets.socket(data.playerSocketId).emit('loadGameData', data);
+  io.sockets.in(data.playerSocketId).emit('loadGameData', data);
 }
 
 function sendGameDataToAll(data) {
