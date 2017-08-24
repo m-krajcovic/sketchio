@@ -45,7 +45,7 @@ export class GameComponent implements OnInit {
         this._gameService.sendGameDataToPlayer(this.drawingBoard.toolData, player.originSocketId);
       }
     });
-    this._gameService.loadGameData.subscribe(toolData => {
+    this._gameService.loadedGameData.subscribe(toolData => {
       this.drawingBoard.toolData = toolData;
     });
     this._gameService.gameJoined.subscribe(player => this.notifyWelcome(player.playerName));

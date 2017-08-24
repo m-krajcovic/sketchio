@@ -26,13 +26,30 @@ exports.initGame = function(sio, socket){
     gameSocket.on('playerJoinGame', playerJoinGame);
     gameSocket.on('playerAnswer', playerAnswer);
     gameSocket.on('playerRestart', playerRestart);
+    gameSocket.on('playerLeaveRoom', playerLeaveRoom);
 
     gameSocket.on('initGameData', sendGameDataToPlayer);
 
     gameSocket.on('hostGameIsRunning', hostGameIsRunning);
 
     gameSocket.on('sendNewMessage', newMessage);
+
+  socket.on("disconnecting", function (data) {
+    let rooms = socket.rooms;
+    let roomIds = Object.keys(rooms);
+    roomIds.forEach(room => {
+      io.sockets.in(room).emit('playerLeftRoom', {
+        originSocketId: this.id
+      });
+    });
+  });
 };
+
+function playerLeaveRoom(data) {
+  io.sockets.in(data.gameId).emit('playerLeftRoom', {
+    originSocketId: this.id
+  });
+}
 
 function newDrawingCommand(data) {
   io.sockets.in(data.gameId).emit('newDrawingCommand', data);
@@ -144,8 +161,11 @@ function playerJoinGame(data) {
         io.sockets.in(data.gameId).emit('playerJoinedRoom', data);
 
     } else {
-        // Otherwise, send an error message back to the player.
-        this.emit('failedRoomJoin',{message: "This room does not exist."} );
+      // Return the Room ID (gameId) and the socket ID (originSocketId) to the browser client
+      this.emit('newGameCreated', {gameId: data.gameId.toString(), originSocketId: this.id});
+
+      // Join the Room and wait for the players
+      this.join(data.gameId.toString());
     }
 }
 
