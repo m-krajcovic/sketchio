@@ -14,16 +14,62 @@
           [drawGrid]="true"
           [drawCursor]="true"
           (newToolData)="toolDataAdded($event)"></canvas>
-  <div class="inputs-container" *ngIf="!drawingDisabled">
-    <button (click)="reset()">Reset</button>
-    <button (click)="undo()">Undo</button>
-    <input type="range" #sizeInput [(ngModel)]="drawingSize" value="5" min="0.1" max="50" step="0.1" title="Range"/>
-    <input type="color" #colorInput title="color" [(ngModel)]="drawingColor" value="#44bbff"/>
+  <!--<div class="inputs-container" *ngIf="!drawingDisabled">-->
+    <!--<button (click)="reset()">Reset</button>-->
+    <!--<button (click)="undo()">Undo</button>-->
+    <!--<input type="range" #sizeInput [(ngModel)]="drawingSize" value="5" min="0.1" max="50" step="0.1" title="Range"/>-->
+    <!--<input type="color" #colorInput title="color" [(ngModel)]="drawingColor" value="#44bbff"/>-->
     <!--<input type="text" #widthInput [(ngModel)]="drawingWidth" (change)="resize()" title="Width"/>-->
     <!--<input type="text" #heightInput [(ngModel)]="drawingHeight" (change)="resize()" title="Height"/>-->
     <!--<input type="checkbox" [(ngModel)]="moving" (change)="toggleMovingTool()" />-->
     <!--<input type="number" #xInput [(ngModel)]="viewPort.start.x" (change)="tempBoard.redraw(); persistentBoard.redraw()" title="x"/>-->
     <!--<input type="number" #yInput [(ngModel)]="viewPort.start.y" (change)="tempBoard.redraw(); persistentBoard.redraw()" title="y"/>-->
     <!--<input type="number" #zoomInput [(ngModel)]="viewPort.zoom" (change)="tempBoard.redraw(); persistentBoard.redraw()" title="zoom"/>-->
+  <!--</div>-->
+  <div #toolsWrapper class="tools-wrapper vertical">
+    <span #toolsGrabber class="tool-grab"><!-- <i class="fa fa-th"></i><i class="fa fa-th"></i><i class="fa fa-th"></i> --></span>
+    <span class="tool">
+      <button class="active" title="Paint brush">
+        <i class="fa fa-paint-brush"></i>
+      </button>
+      <span class="range">
+        <input type="range" [(ngModel)]="drawingSize" value="5" min="0.1" max="50" step="0.1" title="Range"/>
+      </span>
+    </span>
+    <span class="tool">
+      <button class="" title="Eraser">
+        <i class="fa fa-eraser"></i>
+      </button>
+      <span class="range hidden">
+        <input type="range"/>
+      </span>
+    </span>
+    <span class="tool-separator"></span>
+    <span class="tool">
+      <button class="" title="Move tool">
+        <i class="fa fa-arrows"></i>
+      </button>
+    </span>
+    <span class="tool">
+      <button class="">
+        <i class="fa fa-search-plus"></i>
+      </button>
+    </span>
+    <span class="tool">
+      <button class="">
+        <i class="fa fa-search-minus"></i>
+      </button>
+    </span>
+    <span class="tool-separator"></span>
+    <span class="tool">
+      <button (click)="undo()" title="Undo">
+        <i class="fa fa-undo"></i>
+      </button>
+    </span>
+    <span class="tool">
+      <button (click)="reset()" title="Reset">
+        <i class="fa fa-remove"></i>
+      </button>
+    </span>
   </div>
 </div>

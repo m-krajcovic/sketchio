@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {DrawingBoardDirective} from './drawing-board.directive';
 import {ToolData} from './tools';
 import {ViewPort} from './models';
@@ -24,6 +24,9 @@ export class DrawingBoardComponent implements OnInit {
   @ViewChild('tempBoard') tempBoard: DrawingBoardDirective;
   @ViewChild('persistentBoard') persistentBoard: DrawingBoardDirective;
 
+  @ViewChild('toolsWrapper') toolsWrapper: ElementRef;
+  @ViewChild('toolsGrabber') toolsGrabber: ElementRef;
+
   viewPort: ViewPort = new ViewPort();
 
   moving = false;
@@ -39,6 +42,37 @@ export class DrawingBoardComponent implements OnInit {
       this.viewPortChange.next(viewPort);
     });
     this.persistentBoard.newCommand.subscribe(command => this.newDrawingCommand.next(command));
+
+
+
+    let moving = false;
+    let offset = [0, 0];
+    this.toolsGrabber.nativeElement.addEventListener('click', (event) => {
+      if (event.detail === 2) {
+        this.toolsWrapper.nativeElement.classList.toggle('vertical');
+      }
+    });
+    this.toolsGrabber.nativeElement.addEventListener('mousedown', (event) => {
+      moving = true;
+      offset = [
+        this.toolsWrapper.nativeElement.offsetLeft - event.clientX,
+        this.toolsWrapper.nativeElement.offsetTop - event.clientY
+      ];
+      this.tempBoard.drawingDisabled = true;
+    }, true);
+    document.addEventListener('mousemove', (event) => {
+      if (moving) {
+        event.preventDefault();
+        event.stopPropagation();
+        let mousePosition = [event.clientX, event.clientY];
+        this.toolsWrapper.nativeElement.style.left = (mousePosition[0] + offset[0]) + 'px';
+        this.toolsWrapper.nativeElement.style.top  = (mousePosition[1] + offset[1]) + 'px';
+      }
+    }, true);
+    document.addEventListener('mouseup', (event) => {
+      moving = false;
+      this.tempBoard.drawingDisabled = false;
+    }, true);
   }
 
   toolDataAdded(path: ToolData): void {

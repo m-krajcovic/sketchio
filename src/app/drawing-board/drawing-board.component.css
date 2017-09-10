@@ -19,3 +19,231 @@ canvas {
 input, button {
   /*display: block;*/
 }
+
+
+
+.tools-wrapper {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ddd;
+  padding: 3px 3px 3px 11px;
+  border-radius: 3px;
+  border: 1px solid #666;
+  display: flex;
+  box-shadow: 2px 2px 15px -4px rgba(0, 0, 0, 0.5);
+}
+.tools-wrapper.vertical {
+  flex-direction: column;
+  padding: 11px 3px 3px 3px;
+}
+.tools-wrapper.vertical > .tool-separator {
+  height: 1px;
+  width: 100%;
+  margin: 3px 0;
+}
+.tools-wrapper.vertical > .tool-grab {
+  width: 100%;
+  height: 8px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 0;
+  border-right: 0;
+  flex-direction: row;
+  border-bottom: 1px solid #666;
+  background: linear-gradient(#888, #666);
+}
+.tools-wrapper.vertical > .tool-grab > i {
+  transform: rotate(90deg);
+}
+.tools-wrapper.vertical > .tool {
+  margin: 1px 0;
+}
+.tools-wrapper.vertical > .tool > .range {
+  left: calc(100% + 2px);
+  transform: rotate(0deg);
+  top: initial;
+}
+.tools-wrapper > .tool-grab {
+  width: 8px;
+  height: 100%;
+  position: absolute;
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+  border-right: 1px solid #666;
+  background: #666;
+  background: linear-gradient(to right, #888, #666);
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 6pt;
+  cursor: move;
+}
+.tools-wrapper > .tool-grab > i {
+  transform: rotate(0deg);
+}
+.tools-wrapper > .tool-separator {
+  width: 1px;
+  margin: 0 3px;
+  background-color: #bbb;
+}
+.tools-wrapper > .tool {
+  margin: 0 1px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.tools-wrapper > .tool > button {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  padding: 1px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 11pt;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.tools-wrapper > .tool > button:hover {
+  background-color: #bbb;
+  border: 1px solid #999;
+  padding: 0;
+}
+.tools-wrapper > .tool > button:active, .tools-wrapper > .tool > button.active {
+  background-color: #bbb;
+  border: 1px solid #666;
+  padding: 0;
+  box-shadow: inset 0 0 3px 1px rgba(0, 0, 0, 0.4);
+}
+.tools-wrapper > .tool > button:focus {
+  outline: none;
+}
+.tools-wrapper > .tool > button > i {
+  font-size: 12pt;
+  color: #222;
+}
+.tools-wrapper > .tool > .range {
+  position: absolute;
+  border-radius: 3px;
+  border: 1px solid #666;
+  background-color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  box-shadow: 2px 2px 15px -4px rgba(0, 0, 0, 0.5);
+  transform: rotate(90deg);
+  flex-direction: column;
+  top: calc(100% + 74px);
+  height: 16px;
+}
+.tools-wrapper > .tool > .range.hidden {
+  display: none;
+}
+.tools-wrapper > .tool > .range > input {
+  margin: 0;
+}
+
+input[type=range] {
+  /*removes default webkit styles*/
+  -webkit-appearance: none;
+  /*required for proper track sizing in FF*/
+  width: 150px;
+  padding: 5px;
+  background: transparent;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  width: 150px;
+  height: 6px;
+  background: #ccc;
+  border: none;
+  border-radius: 3px;
+  box-shadow: inset 0px 2px 5px 0px rgba(0, 0, 0, 0.4);
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: white;
+  background: linear-gradient(#fafafa, #ddd);
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.9);
+  margin-top: -5px;
+}
+
+input[type=range]:focus {
+  outline: none;
+}
+
+input[type=range]::-moz-range-track {
+  width: 150px;
+  height: 6px;
+  background: #ccc;
+  border: none;
+  border-radius: 3px;
+  box-shadow: inset 0px 2px 5px 0px rgba(0, 0, 0, 0.4);
+}
+
+input[type=range]::-moz-range-thumb {
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: white;
+  background: linear-gradient(#fafafa, #ddd);
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.9);
+}
+
+/*hide the outline behind the border*/
+input[type=range]:-moz-focusring {
+  outline: 1px solid white;
+  outline-offset: -1px;
+}
+
+input[type=range]::-ms-track {
+  width: 150px;
+  height: 6px;
+  /*remove bg colour from the track, we'll use ms-fill-lower and ms-fill-upper instead */
+  background: transparent;
+  /*leave room for the larger thumb to overflow with a transparent border */
+  border-color: transparent;
+  border-width: 6px 0;
+  /*remove default tick marks*/
+  color: transparent;
+  border-radius: 3px;
+}
+
+input[type=range]::-ms-fill-lower {
+  background: #ccc;
+  border-radius: 10px;
+  box-shadow: inset 0px 2px 5px 0px rgba(0, 0, 0, 0.4);
+}
+
+input[type=range]::-ms-fill-upper {
+  background: #ccc;
+  border-radius: 10px;
+  box-shadow: inset 0px 2px 5px 0px rgba(0, 0, 0, 0.4);
+}
+
+input[type=range]::-ms-thumb {
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  border-radius: 50%;
+  background: white;
+  background: linear-gradient(#fafafa, #ddd);
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.9);
+  margin-top: 3px;
+}
