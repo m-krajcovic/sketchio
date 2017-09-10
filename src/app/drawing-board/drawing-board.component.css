@@ -22,10 +22,11 @@ input, button {
 
 
 
+
 .tools-wrapper {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 100px;
+  left: 100px;
   background-color: #ddd;
   padding: 3px 3px 3px 11px;
   border-radius: 3px;
@@ -111,6 +112,23 @@ input, button {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.tools-wrapper > .tool > button[disabled] {
+  cursor: initial;
+}
+.tools-wrapper > .tool > button[disabled] > i {
+  color: #999;
+}
+.tools-wrapper > .tool > button[disabled]:hover {
+  background-color: transparent;
+  border: none;
+  padding: 1px;
+}
+.tools-wrapper > .tool > button[disabled]:active {
+  background-color: transparent;
+  padding: 1px;
+  border: none;
+  box-shadow: none;
 }
 .tools-wrapper > .tool > button:hover {
   background-color: #bbb;
@@ -240,7 +258,6 @@ input[type=range]::-ms-thumb {
   border: none;
   height: 16px;
   width: 16px;
-  border-radius: 50%;
   border-radius: 50%;
   background: white;
   background: linear-gradient(#fafafa, #ddd);
