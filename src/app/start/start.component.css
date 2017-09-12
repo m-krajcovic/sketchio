@@ -19,17 +19,29 @@ span {
 }
 
 input {
-  font-size: 18px;
-  padding: 10px 10px 10px 5px;
-  display: inline-block;
-  width: 200px;
+  font-size: 16px;
   border: none;
-  color: white;
-  border-bottom: 1px solid #fff;
-  background-color: rgba(0, 0, 0, 0);
-  margin-bottom: 5px;
+  box-shadow: 0 -6px #ab3c3c, inset 0 0 15px 0px #ab3c3c;
+  background: #cb4e4e;
+  display: inline-block;
+  margin: 0px 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  position: relative;
+  outline: none;
   text-align: center;
+  padding: 15px 20px;
+  border-radius: 5px;
+  color: white;
+  width: 200px;
+  line-height: 16px;
 }
+
+.btn {
+  width: 80px;
+}
+
 ::-webkit-input-placeholder { /* Chrome */
   color: rgba(255, 255, 255, 0.5);
 }
