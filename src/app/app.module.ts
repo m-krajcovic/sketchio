@@ -13,6 +13,7 @@ import { DrawingBoardComponent } from './drawing-board/drawing-board.component';
 import { StartComponent } from './start/start.component';
 import {RouterModule} from "@angular/router";
 import {GameComponent} from "./game/game.component";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -24,21 +25,25 @@ import {GameComponent} from "./game/game.component";
     GameComponent
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     FormsModule,
     HttpModule,
     RouterModule.forRoot([
       {
         path: '',
-        component: StartComponent
+        component: StartComponent,
+        data: {state: 'home'}
       },
       {
         path: 'game/:gameId',
-        component: GameComponent
+        component: GameComponent,
+        data: {state: 'game'}
       },
       {
         path: 'game',
-        component: GameComponent
+        component: GameComponent,
+        data: {state: 'game'}
       }
     ])
   ],
