@@ -11,23 +11,11 @@
   text-transform: uppercase;
   width: 100%;
   height: 100%;
+  color: white;
 }
 
 span {
   margin: 30px 0;
-}
-
-a {
-  display: inline-block;
-  padding: 6px 9px;
-  border: 1px solid black;
-  border-radius: 3px;
-  margin: 2px;
-}
-
-a:hover {
-  background-color: #ccc;
-  cursor: pointer;
 }
 
 input {
@@ -36,12 +24,36 @@ input {
   display: inline-block;
   width: 200px;
   border: none;
-  border-bottom: 1px solid #757575;
+  color: white;
+  border-bottom: 1px solid #fff;
   background-color: rgba(0, 0, 0, 0);
   margin-bottom: 5px;
   text-align: center;
 }
+::-webkit-input-placeholder { /* Chrome */
+  color: rgba(255, 255, 255, 0.5);
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: rgba(255, 255, 255, 0.5);
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: rgba(255, 255, 255, 0.5);
+}
+:-moz-placeholder { /* Firefox 4 - 18 */
+  color: rgba(255, 255, 255, 0.5);
+}
 
 input:focus {
   outline: none;
+}
+
+.animate-bottom {
+  animation-name: animatebottom;
+  animation-duration: 2s
+}
+
+
+@keyframes animatebottom {
+  from{ /*transform: translate(0, 75vh);*/ opacity:0 }
+  to{ /*transform: translate(0, 0);*/ opacity:1 }
 }

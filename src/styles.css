@@ -2,3 +2,117 @@
 * {
   font-family: 'Roboto', sans-serif;
 }
+
+body {
+  background: #f06060;
+}
+
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.loader {
+  position: absolute;
+  opacity: .7;
+}
+
+.loader circle {
+  animation: draw 4s infinite ease-in-out;
+  transform-origin: center;
+  transform: rotate(-90deg);
+}
+
+.loader-2 circle,
+.loader-6 circle {
+  animation-delay: 1s;
+}
+
+.loader-7 circle {
+  animation-delay: 2s;
+}
+
+.loader-4 circle,
+.loader-8 circle {
+  animation-delay: 3s;
+}
+
+.loader-3 {
+  left: -150px;
+  transform: rotateY(180deg);
+}
+
+.loader-6,
+.loader-7,
+.loader-8 {
+  left: -150px;
+  transform: rotateX(180deg) rotateY(180deg);
+}
+
+.loader-5 circle {
+  opacity: .2;
+}
+
+@keyframes draw {
+  50% {
+    stroke-dashoffset: 0;
+    transform: scale(.5);
+  }
+}
+
+
+
+.btn {
+  border: none;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  padding: 25px 80px;
+  display: inline-block;
+  margin: 15px 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  outline: none;
+  position: relative;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.btn-2 {
+  background: #cb4e4e;
+  color: #fff;
+  box-shadow: 0 6px #ab3c3c;
+  -webkit-transition: none;
+  -moz-transition: none;
+  transition: none;
+}
+
+.btn-2d {
+  border-radius: 5px;
+}
+
+.btn-2d:hover {
+  box-shadow: 0 8px #ab3c3c;
+  top: -2px;
+}
+
+.btn-2d:active {
+  box-shadow: 0 0 #ab3c3c;
+  top: 6px;
+}

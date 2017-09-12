@@ -1,7 +1,7 @@
 .chat {
   /*width: 300px;*/
-  background-color: rgba(0,0,0,0.02);
-  color: rgba(0, 0, 0, 0.6);
+  background-color: transparent;
+  color: #333;
   height: 100%;
 }
 
@@ -14,11 +14,11 @@ ul {
 
 li {
   padding: 5px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  /*border-bottom: 1px solid rgba(0, 0, 0, 0.03);*/
 }
 
 li:hover {
-  background-color: rgba(0, 0, 0, 0.03);
+  /*background-color: rgba(0, 0, 0, 0.03);*/
 }
 
 .msg-date {
