@@ -21,6 +21,8 @@ export class DrawingBoardComponent implements OnInit {
   @Input() drawingHeight = 600;
   @Input() drawingWidth = 800;
 
+  @Input() drawGrid = true;
+
   @ViewChild('tempBoard') tempBoard: DrawingBoardDirective;
   @ViewChild('persistentBoard') persistentBoard: DrawingBoardDirective;
 

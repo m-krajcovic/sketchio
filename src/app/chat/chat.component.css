@@ -1,8 +1,22 @@
+:host {
+  display: flex;
+}
+
 .chat {
   /*width: 300px;*/
-  background-color: transparent;
   color: #333;
+  text-shadow: 1px 1px #fff;
   height: 100%;
+  padding: 10px 10px;
+
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  flex-grow: 1;
+  max-width: 500px;
+
+  overflow: hidden;
 }
 
 ul {
@@ -24,4 +38,18 @@ li:hover {
 .msg-date {
   font-weight: 100;
   color: rgba(0, 0, 0, 0.4);
+  text-shadow: none;
+}
+
+.chat-message {
+  word-wrap: break-word;
+}
+
+.chat-message.ng-enter {
+  -webkit-transition: 2s;
+  transition: 2s;
+  opacity: 0;
+}
+.chat-message.ng-enter-active {
+  opacity: 1;
 }

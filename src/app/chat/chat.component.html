@@ -1,3 +1,4 @@
+<!--
 <div class="chat">
   <ul>
     <li>
@@ -15,4 +16,18 @@
       </span>
     </li>
   </ul>
+</div>
+-->
+<div #chat class="chat">
+  <span *ngFor="let msg of newChatMessages" [ngSwitch]="msg.type" [@flyInOut]="'in'" class="chat-message">
+    <span *ngSwitchCase="1" class="msg-player">
+        <span class="msg-date">{{msg.date | date: 'HH:mm:ss'}}</span>
+        <span class="msg-name">{{msg.playerName}}</span>
+        {{msg.text}}
+      </span>
+      <span *ngSwitchCase="2" class="msg-notification">
+        <span class="msg-date">{{msg.date | date: 'HH:mm:ss'}}</span>
+        {{msg.text}}
+      </span>
+  </span>
 </div>
