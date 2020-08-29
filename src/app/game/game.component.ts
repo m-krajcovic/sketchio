@@ -1,5 +1,5 @@
 import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
-import {GameService} from '../game.service';
+import {GameService, GameState} from '../game.service';
 import {DrawingBoardComponent} from '../drawing-board/drawing-board.component';
 import { ChatComponent } from '../chat/chat.component';
 import {ActivatedRoute, ParamMap, Params} from "@angular/router";
@@ -13,6 +13,10 @@ import 'rxjs/add/operator/switchMap';
 export class GameComponent implements OnInit {
 
   gameId: string;
+  gameState: GameState;
+  gameData: any;
+
+  showLobby: boolean = false;
 
   @ViewChild('drawingBoard') drawingBoard: DrawingBoardComponent;
   @ViewChild('chat') chat: ChatComponent;
@@ -34,9 +38,16 @@ export class GameComponent implements OnInit {
       if (params.gameId) {
         this.gameId = params.gameId;
         this.drawingBoard.reset();
-        this._gameService.joinGame(this.gameId);
+        let name = "g" + Math.floor(Math.random() * 100);
+        this._gameService.joinGame(this.gameId, name);
       }
     });
+
+    this.gameData = this._gameService.gameData;
+    this.gameState = this._gameService.gameState;
+
+    this._gameService.gameStateChange.subscribe(gameState => {this.gameState = gameState; this.showLobby = this.gameState == GameState.LOBBY});
+    this._gameService.gameDataChange.subscribe(gameData => this.gameData = gameData);
 
     this._gameService.gameIdChange.subscribe(gameId => this.gameId = gameId);
     this._gameService.newPlayer.subscribe(player => {
@@ -60,17 +71,19 @@ export class GameComponent implements OnInit {
     this.drawingBoard.newDrawingCommand.subscribe(command => this._gameService.sendNewDrawingCommand(command));
     this._gameService.newDrawingCommand.subscribe(command => this.drawingBoard.applyDrawingCommand(command));
 
+    this._gameService.gameStateChange.subscribe(status => this.changeGameState(status));
+
     console.log(this.drawingBoardContainer.nativeElement.clientHeight);
     console.log(this.drawingBoardContainer.nativeElement.clientWidth);
-    this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
-    this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
+    // this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
+    // this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event) {
-    this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
-    this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
-  }
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   this.drawingHeight = this.drawingBoardContainer.nativeElement.clientHeight;
+  //   this.drawingWidth = this.drawingBoardContainer.nativeElement.clientWidth;
+  // }
 
   notifyNewPlayer(name): void {
     this.chat.addMessage({
@@ -89,5 +102,28 @@ export class GameComponent implements OnInit {
       playerName: ''
     });
     // this.drawingBoard.drawingDisabled = true;
+  }
+
+
+  changeGameState(state: GameState) {
+    this.resetDrawingBoard();
+    switch (state) {
+      case GameState.GUESSING:
+        this.drawingBoard.drawingDisabled = true;
+        break;
+      case GameState.PICKING_WORD:
+        this.drawingBoard.drawingDisabled = true;
+        break;
+      case GameState.DRAWING:
+        this.drawingBoard.drawingDisabled = false;
+        break;
+      case GameState.WAITING:
+        this.drawingBoard.drawingDisabled = true;
+        break;    
+    }
+  }
+
+  resetDrawingBoard() {
+    this.drawingBoard.reset();
   }
 }

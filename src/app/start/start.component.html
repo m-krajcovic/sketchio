@@ -1,9 +1,13 @@
 <div class="start-container row animate-bottom">
   <h3>SketchIO</h3>
-  <div><a class="btn btn-2 btn-2d" (click)="create()">Create</a></div>
+  <div><input placeholder="Enter nickname" type="text" [(ngModel)]="name" title="Name"/></div>
+  <span>
+    Then
+    </span>
+  <div><a class="btn btn-2 btn-2d" [ngClass]="{'disabled': !name}" (click)="create()">Create</a></div>
   <span>
     Or
     </span>
   <div><input placeholder="Insert Game Id" type="text" [(ngModel)]="gameId" title="Game Id"/></div>
-  <div><a class="btn btn-2 btn-2d" (click)="join()">Join</a></div>
+  <div><a class="btn btn-2 btn-2d" [ngClass]="{'disabled': !name}" (click)="join()">Join</a></div>
 </div>

@@ -8,6 +8,10 @@ export class Player {
   name: string;
 }
 
+export enum GameState {
+  GUESSING, DRAWING, WAITING, PICKING_WORD, LOBBY, NONE
+};
+
 @Injectable()
 export class GameService {
 
@@ -20,6 +24,10 @@ export class GameService {
   loadedGameData: EventEmitter<ToolData>;
   playerLeft: EventEmitter<Player>;
   playerJoined: EventEmitter<Player>;
+  gameStateChange: EventEmitter<GameState>;
+  newChatMessage: EventEmitter<string>;
+  newGuessResponse: EventEmitter<string>;
+  gameDataChange: EventEmitter<any>;
 
 
   isHost: boolean = false;
@@ -27,6 +35,10 @@ export class GameService {
   socketId: string;
   me: Player;
   players: Player[] = [];
+
+  gameState: GameState = GameState.NONE;
+
+  gameData: any = {};
 
   socket;
 
@@ -40,9 +52,24 @@ export class GameService {
     this.loadedGameData = new EventEmitter<ToolData>();
     this.playerLeft = new EventEmitter<Player>();
     this.playerJoined = new EventEmitter<Player>();
+    this.gameStateChange = new EventEmitter<GameState>();
+
+    this.gameDataChange = new EventEmitter<GameState>();
+
+    this.newChatMessage = new EventEmitter<string>();
+    this.newGuessResponse = new EventEmitter<string>();
+
     this.socket = io.connect();
+
     this.socket.on('connected', this.onConnected.bind(this));
     this.socket.on('newGameCreated', this.onNewGameCreated.bind(this));
+
+    this.socket.on('gameStarted', this.onGameStarted.bind(this));
+    this.socket.on('turnPrepare', this.onTurnPrepare.bind(this));
+    this.socket.on('turnStart', this.onTurnStart.bind(this));
+    this.socket.on('chatResponse', this.onChatMessage.bind(this));
+    this.socket.on('guessResponse', this.onGuessResponse.bind(this));
+    
     this.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom.bind(this));
     this.socket.on('newToolData', this.onNewToolData.bind(this));
     this.socket.on('viewPortChange', this.onViewPortChange.bind(this));
@@ -50,10 +77,73 @@ export class GameService {
     this.socket.on('loadGameData', this.onLoadGameData.bind(this));
     this.socket.on('failedRoomJoin', this.onFailedRoomJoin.bind(this));
     this.socket.on('playerLeftRoom', this.onPlayerLeftRoom.bind(this));
+
+    this.socket.on('gameUpdate', this.onGameUpdate.bind(this));
+  }
+
+  createGame(name): void {
+    console.log(name);
+    this.me = new Player();
+    this.me.name = name;
+    this.me.socketId = this.socketId;
+    this.socket.emit('hostCreateNewGame', {
+      playerName: name || 'anon'
+    });
   }
 
   startGame(): void {
-    this.socket.emit('hostCreateNewGame');
+    this.socket.emit('hostStartGame', {gameId: this.gameId});
+  }
+
+  chatMessage(text): void {
+    this.socket.emit('sendNewMessage', {
+      gameId: this.gameId,
+      text: text
+    }, function(answer) {
+      console.log(answer);
+    });
+  }
+
+  pickWord(word): void {
+    this.socket.emit('pickWord', {
+      gameId: this.gameId,
+      pickedWord: word,
+    });
+  }
+
+  endRound(): void {
+    this.socket.emit('endRound', {gameId: this.gameId});
+  }
+
+  onGameStarted(data): void {
+    // nnot sure what to do here, probably nothing tbh
+  }
+
+  onTurnPrepare(data): void {
+    let state = GameState.WAITING;
+    if (data.players[data.drawing].id === this.socket.id) {
+      state = GameState.PICKING_WORD;
+    }
+    this.gameState = state;
+    this.gameStateChange.next(state);
+  }
+
+  onTurnStart(data): void {
+    let state = GameState.GUESSING;
+    if (data.players[data.drawing].id === this.socket.id) {
+      state = GameState.DRAWING;
+    }
+    this.gameState = state;
+    this.gameStateChange.next(state);
+  }
+
+  onChatMessage(data): void {
+    this.newChatMessage.next(`${data.from.name}: ${data.text}`);
+  }
+
+  onGuessResponse(data): void {
+    //     let response = { gameId: data.gameId, player: this.id, guessed: false, score: 0, close: false };
+    this.newGuessResponse.next(data);
   }
 
   onNewGameCreated(data): void {
@@ -66,16 +156,24 @@ export class GameService {
     this.socketId = this.socket.id;
   }
 
-  joinGame(gameId: string) {
+  joinGame(gameId: string, name: string) {
     if (this.gameId !== gameId) {
       const data = {
         gameId: gameId,
-        playerName: 'anon'
+        playerName: name || 'anon'
       };
+      this.me = new Player();
+      this.me.name = name;
+      this.me.socketId = this.socketId;
 
       // Send the gameId and playerName to the server
       this.socket.emit('playerJoinGame', data);
     }
+  }
+
+  onGameUpdate(data) {
+    this.gameData = data;
+    this.gameDataChange.emit(this.gameData);
   }
 
 

@@ -14,11 +14,13 @@ import { StartComponent } from './start/start.component';
 import {RouterModule} from "@angular/router";
 import {GameComponent} from "./game/game.component";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { LobbyComponent } from './lobby/lobby.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DrawingBoardDirective,
+    LobbyComponent,
     ChatComponent,
     DrawingBoardComponent,
     StartComponent,
@@ -44,6 +46,11 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         path: 'game',
         component: GameComponent,
         data: {state: 'game'}
+      },
+      {
+        path: 'lobby',
+        component: LobbyComponent,
+        data: {state: 'lobby'}
       }
     ])
   ],

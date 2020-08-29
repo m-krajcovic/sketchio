@@ -43,6 +43,8 @@ server.listen(port, () => console.log(`API running on localhost:${port}`));
 
 const io = require('socket.io').listen(server);
 const game = require('./server/game');
+const NodeCache = require( "node-cache" );
+const gameCache = new NodeCache();
 
 // Reduce the logging output of Socket.IO
 io.set('log level',1);
@@ -50,5 +52,5 @@ io.set('log level',1);
 // Listen for Socket.IO Connections. Once connected, start the game logic.
 io.sockets.on('connection', function (socket) {
   console.log('client connected');
-  game.initGame(io, socket);
+  game.initGame(io, socket, gameCache);
 });

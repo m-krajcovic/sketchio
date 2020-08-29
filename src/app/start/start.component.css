@@ -42,6 +42,12 @@ input {
   width: 80px;
 }
 
+.btn.disabled {
+  cursor: pointer;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 
 ::-webkit-input-placeholder { /* Chrome */
   color: rgba(255, 255, 255, 0.5);

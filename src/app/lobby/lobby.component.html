@@ -1,0 +1,10 @@
+<div class="start-container row animate-bottom">
+    <h3>Game {{ gameId }}</h3>
+
+    <div>
+        <div *ngFor="let player of players"  class="playerBox">{{player.name}}</div>
+    </div>
+
+    <div><a class="btn btn-2 btn-2d" *ngIf="isHost" (click)="start()">Start</a></div>
+  </div>
+  

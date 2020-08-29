@@ -5,6 +5,7 @@
           [drawingWidth]="drawingWidth"
           [drawingHeight]="drawingHeight"></canvas>
   <canvas appDrawingBoard #tempBoard="appDrawingBoard"
+          [zoomDisabled] = "zoomDisabled"
           [viewPort]="viewPort"
           [drawingDisabled]="drawingDisabled"
           [drawingSize]="drawingSize"
@@ -26,7 +27,7 @@
     <!--<input type="number" #yInput [(ngModel)]="viewPort.start.y" (change)="tempBoard.redraw(); persistentBoard.redraw()" title="y"/>-->
     <!--<input type="number" #zoomInput [(ngModel)]="viewPort.zoom" (change)="tempBoard.redraw(); persistentBoard.redraw()" title="zoom"/>-->
   <!--</div>-->
-  <div #toolsWrapper class="tools-wrapper vertical">
+  <div #toolsWrapper class="tools-wrapper vertical" *ngIf="!drawingDisabled">
     <span #toolsGrabber class="tool-grab"><!-- <i class="fa fa-th"></i><i class="fa fa-th"></i><i class="fa fa-th"></i> --></span>
     <span class="tool">
       <button class="active" title="Paint brush">

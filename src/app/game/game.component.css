@@ -30,5 +30,9 @@
   background: white;
   /*overflow: hidden;*/
   /*height: 100%;*/
-  flex: 1 1 100%
+  flex: 1 1 100%;
+}
+
+:host >>> .drawing-board {
+  border:1px solid black;
 }

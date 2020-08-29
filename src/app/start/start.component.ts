@@ -10,6 +10,7 @@ import {Router} from '@angular/router';
 export class StartComponent implements OnInit {
 
   private gameId;
+  private name;
 
   constructor(private _gameService: GameService,
               private router: Router) { }
@@ -22,11 +23,11 @@ export class StartComponent implements OnInit {
   }
 
   create() {
-    this._gameService.startGame();
+    this._gameService.createGame(this.name);
   }
 
   join() {
-    this._gameService.joinGame(this.gameId);
+    this._gameService.joinGame(this.gameId, this.name);
   }
 
 }

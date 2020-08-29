@@ -11,6 +11,7 @@ export class DrawingBoardDirective implements OnInit {
   @Input() drawingColor = '#4bf';
   @Input() drawingSize = 5;
   @Input() drawingDisabled = false;
+  @Input() zoomDisabled = false;
 
 
   @Input() viewPort: ViewPort = new ViewPort();
@@ -98,7 +99,7 @@ export class DrawingBoardDirective implements OnInit {
 
   private zoomCommitHandle = null;
   _mouseWheelHandler(event) {
-    if (!this.drawingDisabled) {
+    if (!this.drawingDisabled && !this.zoomDisabled) {
       let currentX, currentY;
       if (event.offsetX !== undefined) {
         currentX = event.offsetX;

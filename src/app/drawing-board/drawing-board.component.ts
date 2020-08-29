@@ -17,6 +17,7 @@ export class DrawingBoardComponent implements OnInit {
   @Input() drawingColor = '#44bbff';
   @Input() drawingSize = 5;
   @Input() drawingDisabled = false;
+  @Input() zoomDisabled = false;
 
   @Input() drawingHeight = 600;
   @Input() drawingWidth = 800;
@@ -49,19 +50,21 @@ export class DrawingBoardComponent implements OnInit {
 
     let moving = false;
     let offset = [0, 0];
-    this.toolsGrabber.nativeElement.addEventListener('click', (event) => {
-      if (event.detail === 2) {
-        this.toolsWrapper.nativeElement.classList.toggle('vertical');
-      }
-    });
-    this.toolsGrabber.nativeElement.addEventListener('mousedown', (event) => {
-      moving = true;
-      offset = [
-        this.toolsWrapper.nativeElement.offsetLeft - event.clientX,
-        this.toolsWrapper.nativeElement.offsetTop - event.clientY
-      ];
-      this.tempBoard.drawingDisabled = true;
-    }, true);
+    if (this.toolsGrabber) {
+      this.toolsGrabber.nativeElement.addEventListener('click', (event) => {
+        if (event.detail === 2) {
+          this.toolsWrapper.nativeElement.classList.toggle('vertical');
+        }
+      });
+      this.toolsGrabber.nativeElement.addEventListener('mousedown', (event) => {
+        moving = true;
+        offset = [
+          this.toolsWrapper.nativeElement.offsetLeft - event.clientX,
+          this.toolsWrapper.nativeElement.offsetTop - event.clientY
+        ];
+        this.tempBoard.drawingDisabled = true;
+      }, true);
+    }
     document.addEventListener('mousemove', (event) => {
       if (moving) {
         event.preventDefault();
