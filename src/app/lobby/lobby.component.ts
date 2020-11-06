@@ -11,7 +11,7 @@ export class LobbyComponent implements OnInit {
 
   private gameId;
   private isHost = false;
-  private players = [];
+  private gameData = {};
 
   constructor(private _gameService: GameService,
               private router: Router) { }
@@ -21,8 +21,12 @@ export class LobbyComponent implements OnInit {
 
     this._gameService.gameDataChange.subscribe(gameUpdate => {
         this.gameId = gameUpdate.gameId;
-        this.players = gameUpdate.players;
+        this.gameData = gameUpdate;
     })
+
+    // this._gameService.subscribe(data => {
+
+    // })
   }
 
   start() {

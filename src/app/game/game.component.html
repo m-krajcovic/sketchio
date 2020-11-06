@@ -1,4 +1,4 @@
-<div *ngClass="{'hidden': showLobby}" class="game-container">
+<div class="game-container">
   <div class="drawing-board-container" #drawingBoardContainer>
     <app-drawing-board #drawingBoard [drawingWidth]="drawingWidth" [drawingHeight]="drawingHeight" [drawGrid]="false" [zoomDisabled]="true"></app-drawing-board>
   </div>
@@ -6,4 +6,3 @@
     <app-chat #chat></app-chat>
   </div>
 </div>
-<app-lobby *ngIf="{'hidden': !showLobby}"></app-lobby>
